@@ -16,11 +16,12 @@
 ☐ /thesis-drift /Users/dev/Downloads/holdings.csv generat html report in english 
 ☐ /news-pulse /Users/dev/Downloads/holdings.csv generat html report in english 
 
-Run all below for stocks and bonds and consolidate dashboard.html fith include forcast value and sell and buy quantity suggestions and report charts
-☐ /portfolio-review /Users/dev/Downloads/holdings.csv 
-☐ /thesis-tracker /Users/dev/Downloads/holdings.csv
-☐ /thesis-drift /Users/dev/Downloads/holdings.csv
-☐ /news-pulse /Users/dev/Downloads/holdings.csv
-☐ /quality-screen /Users/dev/Downloads/holdings.csv
-☐ /bottleneck-hunter /Users/dev/Downloads/holdings.csv
-☐ /investment-checklist /Users/dev/Downloads/holdings.csv
+Run all below for stocks and bonds in "/Users/dev/Downloads/holdings.csv" and consolidate into dashboard.html
+which should include forcast value and sell and buy quantity suggestions and report charts
+☐ /portfolio-review 
+☐ /thesis-tracker
+☐ /thesis-drift 
+☐ /news-pulse 
+☐ /quality-screen 
+☐ /bottleneck-hunter 
+☐ /investment-checklist 
