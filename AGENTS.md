@@ -20,7 +20,7 @@ GitHub: xbtlin/ai-berkshire
 - `tools/*.py`: shared financial validation and data tools used by both systems.
 - `reports/`: research outputs. Do not rewrite unrelated reports while changing
   tooling or skills.
-- `html/`: standalone HTML reports (portfolio dashboards, visualizations, etc.). All HTML reports must include dark mode support via `prefers-color-scheme`.
+- `html/`: standalone HTML reports (portfolio dashboards, visualizations, etc.). All HTML reports must include a dark/light mode toggle (JS button or `prefers-color-scheme` media query).
 - `assets/`: static resources like images.
 - `scripts/sync-codex-skills.py`: regenerates Codex skills from `skills/*.md`.
 - `scripts/install-codex-skills.sh` / `scripts/install-codex-skills.bat`:
