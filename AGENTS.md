@@ -20,6 +20,7 @@ GitHub: xbtlin/ai-berkshire
 - `tools/*.py`: shared financial validation and data tools used by both systems.
 - `reports/`: research outputs. Do not rewrite unrelated reports while changing
   tooling or skills.
+- `html/`: standalone HTML reports (portfolio dashboards, visualizations, etc.).
 - `assets/`: static resources like images.
 - `scripts/sync-codex-skills.py`: regenerates Codex skills from `skills/*.md`.
 - `scripts/install-codex-skills.sh` / `scripts/install-codex-skills.bat`:
