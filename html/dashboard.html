@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Dashboard — AI Berkshire</title>
+<style>
+  :root {
+    --bg:#f8f9fa; --bg2:#fff; --bg3:#e9ecef;
+    --text:#212529; --text2:#495057; --text3:#868e96;
+    --border:#dee2e6;
+    --green:#087f5b; --red:#c92a2a; --yellow:#e67700; --blue:#1864ab;
+    --green-bg:#d3f9d8; --red-bg:#ffe3e3; --yellow-bg:#fff3bf; --blue-bg:#d0ebff;
+  }
+  @media (prefers-color-scheme:dark) {
+    :root {
+      --bg:#1a1a1a; --bg2:#252525; --bg3:#333;
+      --text:#e9ecef; --text2:#ced4da; --text3:#868e96;
+      --border:#444;
+      --green:#51cf66; --red:#ff6b6b; --yellow:#ffd43b; --blue:#339af0;
+      --green-bg:#2b2b1a; --red-bg:#2b1a1a; --yellow-bg:#2b2b1a; --blue-bg:#1a1a2b;
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding:20px}
+  .container{max-width:1400px;margin:0 auto}
+  h1{font-size:1.6rem;margin-bottom:4px;font-weight:700}
+  h2{font-size:1.2rem;margin:24px 0 12px;font-weight:600;border-bottom:2px solid var(--border);padding-bottom:4px}
+  h3{font-size:1rem;margin:16px 0 8px;font-weight:600}
+  .subtitle{color:var(--text3);font-size:.85rem;margin-bottom:16px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:16px}
+  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+  .stat-card .label{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+  .stat-card .value{font-size:1.3rem;font-weight:700;margin-top:4px}
+  .stat-card .value.green{color:var(--green)}
+  .stat-card .value.red{color:var(--red)}
+  .stat-card .value.yellow{color:var(--yellow)}
+  .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:600}
+  .tag-buy{background:var(--green-bg);color:var(--green)}
+  .tag-sell{background:var(--red-bg);color:var(--red)}
+  .tag-hold{background:var(--blue-bg);color:var(--blue)}
+  .tag-warn{background:var(--yellow-bg);color:var(--yellow)}
+  .tag-pass{background:var(--green-bg);color:var(--green)}
+  .tag-fail{background:var(--red-bg);color:var(--red)}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin-bottom:16px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+  th{background:var(--bg3);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.3px}
+  tr:hover{background:var(--bg3)}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
+  .card .name{font-weight:600;font-size:.95rem;margin-bottom:4px}
+  .card .meta{font-size:.8rem;color:var(--text3);margin-bottom:8px}
+  .card .verdict{display:inline-block;padding:2px 10px;border-radius:4px;font-size:.8rem;font-weight:600;margin-top:4px}
+  .news-item{padding:4px 0;font-size:.82rem;border-bottom:1px solid var(--border)}
+  .news-item:last-child{border:none}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+  .dot-green{background:var(--green)}
+  .dot-red{background:var(--red)}
+  .dot-yellow{background:var(--yellow)}
+  .section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px}
+  .rating-bar{height:6px;border-radius:3px;background:var(--bg3);margin:4px 0;max-width:200px}
+  .rating-fill{height:100%;border-radius:3px}
+  .alpha{display:flex;gap:4px;font-size:.8rem;align-items:center}
+  .text-green{color:var(--green)}.text-red{color:var(--red)}.text-yellow{color:var(--yellow)}.text-blue{color:var(--blue)}
+  .btn{background:var(--bg3);border:1px solid var(--border);padding:4px 12px;border-radius:4px;cursor:pointer;font-size:.8rem;color:var(--text)}
+  .btn:hover{background:var(--border)}
+  .action-list{list-style:none;padding:0}
+  .action-list li{padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start}
+  .action-list li:last-child{border:none}
+  .priority{display:inline-block;min-width:20px;text-align:center;background:var(--bg3);border-radius:50%;font-size:.75rem;font-weight:700;padding:2px 6px}
+  @media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
+  .toggle-wrap{text-align:right;margin-bottom:8px}
+  .bottleneck{font-size:.82rem}
+  .bottleneck span{display:inline-block;padding:1px 6px;border-radius:3px;font-weight:600;font-size:.75rem;margin-right:4px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="toggle-wrap">
+  <button class="btn" onclick="document.documentElement.style.colorScheme=document.documentElement.style.colorScheme==='dark'?'light':'dark'" id="modeBtn">Toggle Dark/Light</button>
+</div>
+
+<h1>Portfolio Dashboard</h1>
+<p class="subtitle">Generated 2026-07-12 · Skills: portfolio-review · thesis-tracker · thesis-drift · news-pulse · quality-screen · bottleneck-hunter · investment-checklist · investment-research</p>
+
+<!-- OVERVIEW STATS -->
+<div class="stats">
+  <div class="stat-card"><div class="label">Total Value</div><div class="value">₹2,66,431</div></div>
+  <div class="stat-card"><div class="label">Stock Value</div><div class="value">₹1,12,489</div></div>
+  <div class="stat-card"><div class="label">Bond Value</div><div class="value">₹1,53,942</div></div>
+  <div class="stat-card"><div class="label">Stock P&amp;L</div><div class="value red">-₹3,238 (-2.9%)</div></div>
+  <div class="stat-card"><div class="label">Holdings</div><div class="value">17</div></div>
+  <div class="stat-card"><div class="label">Health</div><div class="value yellow">Good</div></div>
+</div>
+
+<div class="stats">
+  <div class="stat-card"><div class="label">Bonds %</div><div class="value">57.8%</div></div>
+  <div class="stat-card"><div class="label">Auto/Auto Anc</div><div class="value">10.2%</div></div>
+  <div class="stat-card"><div class="label">FMCG/Agri</div><div class="value">10.5%</div></div>
+  <div class="stat-card"><div class="label">Renewable</div><div class="value">5.0%</div></div>
+  <div class="stat-card"><div class="label">Shipping</div><div class="value">4.3%</div></div>
+  <div class="stat-card"><div class="label">Financials</div><div class="value">3.0%</div></div>
+</div>
+
+<!-- ACTION PLAN -->
+<div class="section">
+  <h2>Action Plan</h2>
+  <ol class="action-list">
+    <li><span class="priority">1</span><span><strong class="text-red">SELL all 163 INOXWIND</strong> (~₹13,436) — Deteriorating business, 7% ROE, 35x PE, Q4 PAT -51%, mgmt credibility low. Worst holding.</span></li>
+    <li><span class="priority">2</span><span><strong class="text-yellow">SELL 12 of 24 EIDPARRY</strong> (~₹9,104) — Sugar structurally unprofitable. Keep half for Coromandel stake value.</span></li>
+    <li><span class="priority">3</span><span><strong class="text-green">BUY 10 more ITC</strong> (~₹2,818) — 29% ROE, 5.2% yield, 17x PE. Tax hike sell-off overdone for this 80% monopoly.</span></li>
+    <li><span class="priority">4</span><span><strong class="text-green">BUY 5 more BLS</strong> (~₹1,187) — 30% ROE, 37% growth, PEG 0.46. Market oversold on MEA concerns.</span></li>
+    <li><span class="priority">5</span><span><strong class="text-green">BUY 2 more HEROMOTOCO</strong> (~₹9,898) — 28.5% ROE, record earnings, -16% YTD. Mispriced quality.</span></li>
+    <li><span class="priority">6</span><span><strong>HOLD</strong> APTUS, JKTYRE, M&M, INFY, JSL, GESHIP at current positions.</span></li>
+    <li><span class="priority">7</span><span><strong>MONITOR</strong> BBB-rated NCDs — reduce if microfinance credit quality deteriorates.</span></li>
+    <li><span class="priority">8</span><span><strong>Post-rebalance:</strong> ~₹22,540 freed → deploy ₹13,903 into buys → ~₹8,637 cash reserve (3.2%).</span></li>
+  </ol>
+</div>
+
+<!-- STOCK TABLE -->
+<div class="section">
+  <h2>Holdings Analysis</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Holding</th><th>Qty</th><th>Avg Cost</th><th>Price</th><th>Value</th><th>P&amp;L</th><th>Checklist</th><th>Quality</th><th>Action</th><th>Suggestion</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>BLS</td><td>31</td><td>270</td><td>237</td><td>7,356</td><td class="text-red">-1,019</td><td><span class="tag tag-pass">PASS</span></td><td><span class="tag tag-pass">8/10</span></td><td><span class="tag tag-buy">BUY +5</span></td><td rowspan="3">Best risk-reward: PEG 0.46, 30% ROE, govt contract moat. Stock -33% despite record earnings — market overreacted.</td></tr>
+      <tr><td>HEROMOTOCO</td><td>1</td><td>5,040</td><td>4,949</td><td>4,949</td><td class="text-red">-90</td><td><span class="tag tag-pass">PASS</span></td><td><span class="tag tag-pass">8/10</span></td><td><span class="tag tag-buy">BUY +2</span></td><td>World's #1 2W, 28.5% ROE, near-zero debt, record earnings. -16% YTD = market pricing EV fear, not competitive reality.</td></tr>
+      <tr><td>ITC</td><td>35</td><td>298</td><td>282</td><td>9,861</td><td class="text-red">-582</td><td><span class="tag tag-pass">PASS</span></td><td><span class="tag tag-pass">8/10</span></td><td><span class="tag tag-buy">BUY +10</span></td><td>80% cig monopoly, 29% ROE, net cash, 5.2% yield. Tax hike hit is entry opportunity.</td></tr>
+      <tr><td>M&amp;M</td><td>5</td><td>3,077</td><td>3,129</td><td>15,647</td><td class="text-green">+260</td><td><span class="tag tag-pass">PASS</span></td><td><span class="tag tag-pass">8/10</span></td><td><span class="tag tag-hold">HOLD</span></td><td>#1 SUV + #1 tractor + #1 LCV. FCF inflection. Fully valued at 22.5x PE but quality justifies.</td></tr>
+      <tr><td>APTUS</td><td>28</td><td>259</td><td>284</td><td>7,946</td><td class="text-green">+697</td><td><span class="tag tag-pass">PASS</span></td><td><span class="tag tag-pass">8/10</span></td><td><span class="tag tag-hold">HOLD</span></td><td>Best-in-class HFC ROE (20%), conservative lending. Watch rising GNPA (1.52%).</td></tr>
+      <tr><td>INFY</td><td>6</td><td>1,064</td><td>1,068</td><td>6,408</td><td class="text-green">+25</td><td><span class="tag tag-pass">PASS</span></td><td><span class="tag tag-pass">7/10</span></td><td><span class="tag tag-hold">HOLD</span></td><td>33% ROE, fortress balance sheet, 4.6% yield. Anaemic growth but priced for it at 14x PE.</td></tr>
+      <tr><td>GESHIP</td><td>8</td><td>1,485</td><td>1,421</td><td>11,367</td><td class="text-red">-513</td><td><span class="tag tag-pass">PASS</span></td><td><span class="tag tag-pass">7/10</span></td><td><span class="tag tag-hold">HOLD</span></td><td>PE 7.5, 0.8x NAV, net cash. Peak-cycle earnings from Hormuz disruption — cyclical risk but cheap.</td></tr>
+      <tr><td>JSL</td><td>15</td><td>723</td><td>716</td><td>10,746</td><td class="text-red">-99</td><td><span class="tag tag-pass">PASS</span></td><td><span class="tag tag-pass">7/10</span></td><td><span class="tag tag-hold">HOLD</span></td><td>India's #1 SS, low D/E. Commodity headwinds temporary. PE 19x OK for quality.</td></tr>
+      <tr><td>JKTYRE</td><td>16</td><td>398</td><td>410</td><td>6,565</td><td class="text-green">+203</td><td><span class="tag tag-pass">PASS</span></td><td><span class="tag tag-warn">5/10</span></td><td><span class="tag tag-hold">HOLD</span></td><td>Cheap (PE 13.6) but thin margins (5.1%), cyclical, large capex. Commodity exposure.</td></tr>
+      <tr><td>EIDPARRY</td><td>24</td><td>777</td><td>759</td><td>18,208</td><td class="text-red">-451</td><td><span class="tag tag-fail">FAIL</span></td><td><span class="tag tag-fail">4/10</span></td><td><span class="tag tag-sell">SELL -12</span></td><td>Sugar structurally unprofitable, CEO warns FY27 challenging. Value = Coromandel stake.</td></tr>
+      <tr><td>INOXWIND</td><td>163</td><td>93</td><td>82</td><td>13,436</td><td class="text-red">-1,669</td><td><span class="tag tag-fail">FAIL</span></td><td><span class="tag tag-fail">4/10</span></td><td><span class="tag tag-sell">SELL ALL</span></td><td>7% ROE, 35x PE, Q4 PAT -51%, mgmt guided 75% growth with zero credibility. Exit.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- BONDS -->
+<div class="section">
+  <h2>Bond Holdings</h2>
+  <table>
+    <thead><tr><th>Bond</th><th>Issuer</th><th>Coupon</th><th>Units</th><th>Value</th><th>Rating</th><th>Sector</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td>12KFL27</td><td>Kosamattam Finance</td><td>12.0%</td><td>3</td><td>29,550</td><td>IND A/Stable</td><td>Gold loans</td><td><span class="tag tag-hold">HOLD</span></td></tr>
+      <tr><td>1125SSFL28</td><td>Spandana Sphoorty</td><td>11.25%</td><td>3</td><td>29,952</td><td>ICRA BBB+/Stable</td><td>Microfinance</td><td><span class="tag tag-hold">MONITOR</span></td></tr>
+      <tr><td>1075SFL28A</td><td>Satin Finserv</td><td>10.75%</td><td>3</td><td>29,970</td><td>ICRA BBB</td><td>SME lending</td><td><span class="tag tag-hold">HOLD</span></td></tr>
+      <tr><td>1280ACAP28</td><td>Akara Capital</td><td>12.80%</td><td>3</td><td>29,775</td><td>ICRA BBB</td><td>Digital lending</td><td><span class="tag tag-hold">HOLD</span></td></tr>
+      <tr><td>1225IFL28-N0</td><td>IFL Finance</td><td>12.25%</td><td>3</td><td>22,500</td><td>CRISIL BBB</td><td>Gold loans</td><td><span class="tag tag-hold">HOLD</span></td></tr>
+      <tr><td>11UFL28</td><td>Unigold Finance</td><td>11.0%</td><td>3</td><td>18,000</td><td>CRISIL BBB/Stable</td><td>Gold loans</td><td><span class="tag tag-hold">HOLD</span></td></tr>
+    </tbody>
+  </table>
+  <p><strong>Bond Verdict:</strong> Yield avg ~11.5%, BBB to A rated, medium risk. Hold with credit monitoring. 57.8% allocation is conservative; useful ballast for equity volatility. Reduce BBB-rated microfinance exposure if asset quality weakens.</p>
+</div>
+
+<!-- QUALITY SCREEN + CHECKLIST -->
+<div class="grid-2">
+  <div class="section">
+    <h2>Quality Screen</h2>
+    <table>
+      <thead><tr><th>Stock</th><th>ROE</th><th>FCF</th><th>Margin</th><th>Net%</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>APTUS</td><td>20%</td><td>Pos</td><td>>80%</td><td>44%</td><td><span class="tag tag-pass">PASS</span></td></tr>
+        <tr><td>INFY</td><td>33%</td><td>Pos</td><td>>30%</td><td>16%</td><td><span class="tag tag-pass">PASS</span></td></tr>
+        <tr><td>HEROMOTOCO</td><td>29%</td><td>Pos</td><td>>28%</td><td>11%</td><td><span class="tag tag-pass">PASS</span></td></tr>
+        <tr><td>ITC</td><td>29%</td><td>Pos</td><td>>60%</td><td>25%</td><td><span class="tag tag-pass">PASS</span></td></tr>
+        <tr><td>BLS</td><td>30%</td><td>Pos</td><td>>40%</td><td>24%</td><td><span class="tag tag-pass">PASS</span></td></tr>
+        <tr><td>M&amp;M</td><td>20%</td><td>Pos</td><td>>20%</td><td>9%</td><td><span class="tag tag-pass">PASS</span></td></tr>
+        <tr><td>GESHIP</td><td>16%</td><td>Pos</td><td>>50%</td><td>47%</td><td><span class="tag tag-pass">PASS</span></td></tr>
+        <tr><td>JSL</td><td>17%</td><td>Pos</td><td>>25%</td><td>7%</td><td><span class="tag tag-pass">PASS</span></td></tr>
+        <tr><td>JKTYRE</td><td>14%</td><td>Pos</td><td>>20%</td><td>5.1%</td><td><span class="tag tag-pass">PASS</span>⚠</td></tr>
+        <tr><td>EIDPARRY</td><td>8%</td><td>Neg</td><td>>12%</td><td>1.5%</td><td><span class="tag tag-fail">FAIL</span></td></tr>
+        <tr><td>INOXWIND</td><td>7%</td><td>Neg</td><td>>20%</td><td>8%</td><td><span class="tag tag-fail">FAIL</span></td></tr>
+      </tbody>
+    </table>
+    <p><strong>Pass:</strong> 9/11 · <strong>Fail:</strong> EIDPARRY (low margin) · INOXWIND (low ROE, exemption A fails — gross margin <30%)</p>
+  </div>
+  <div class="section">
+    <h2>Checklist Scores</h2>
+    <table>
+      <thead><tr><th>Stock</th><th>Biz</th><th>Good Biz</th><th>Moat</th><th>Mgt</th><th>Safety</th><th>Posn</th></tr></thead>
+      <tbody>
+        <tr><td>APTUS</td><td>★★★★</td><td>★★★★</td><td>★★★</td><td>★★★★</td><td>★★★</td><td>✅</td></tr>
+        <tr><td>JKTYRE</td><td>★★★★</td><td>★★★</td><td>★★</td><td>★★★</td><td>★★★</td><td>✅</td></tr>
+        <tr><td>M&amp;M</td><td>★★★★</td><td>★★★★</td><td>★★★★</td><td>★★★★</td><td>★★★</td><td>✅</td></tr>
+        <tr><td>INFY</td><td>★★★★</td><td>★★★★</td><td>★★★</td><td>★★★★</td><td>★★★★</td><td>✅</td></tr>
+        <tr><td>JSL</td><td>★★★</td><td>★★★</td><td>★★★</td><td>★★★</td><td>★★★</td><td>✅</td></tr>
+        <tr><td>HERO</td><td>★★★★</td><td>★★★★</td><td>★★★★</td><td>★★★★</td><td>★★★★</td><td>✅</td></tr>
+        <tr><td>EIDPARRY</td><td>★★★</td><td>★★</td><td>★★</td><td>★★★</td><td>★★</td><td>❌</td></tr>
+        <tr><td>GESHIP</td><td>★★★</td><td>★★★</td><td>★★</td><td>★★★★</td><td>★★★★★</td><td>✅</td></tr>
+        <tr><td>ITC</td><td>★★★★</td><td>★★★★★</td><td>★★★★★</td><td>★★★★</td><td>★★★★</td><td>✅</td></tr>
+        <tr><td>INOXWIND</td><td>★★★</td><td>★★</td><td>★★</td><td>★★</td><td>★</td><td>❌</td></tr>
+        <tr><td>BLS</td><td>★★★★</td><td>★★★★</td><td>★★★★</td><td>★★★★</td><td>★★★★</td><td>✅</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Pass:</strong> 9/11 · <strong>Fail:</strong> EIDPARRY, INOXWIND</p>
+  </div>
+</div>
+
+<!-- THESIS + NEWS PULSE -->
+<div class="grid-2">
+  <div class="section">
+    <h2>Thesis Tracker</h2>
+    <p class="subtitle">11 theses established (no prior baselines existed). Future runs will detect drift.</p>
+    <table>
+      <thead><tr><th>Stock</th><th>Thesis</th></tr></thead>
+      <tbody>
+        <tr><td>APTUS</td><td>Best-in-class HFC ROE (20%) in India's underpenetrated affordable housing. Conservative underwriting, south India focused. Watch credit quality.</td></tr>
+        <tr><td>ITC</td><td>80% cig monopoly at 17x PE with 29% ROE, 5.2% yield. Tax hike created entry. Regulatory risk permanent but survivable.</td></tr>
+        <tr><td>BLS</td><td>30% ROE, govt contract moat, 37% growth, PE 16. Market oversold on MEA risk. Best GARP in portfolio.</td></tr>
+        <tr><td>HERO</td><td>World's #1 2W, 28.5% ROE, debt-free, 3.7% yield. Stock -16% despite record earnings = mispriced.</td></tr>
+        <tr><td>INFY</td><td>33% ROE fortress at 14x PE. Growth anaemic but $2.8B net cash + 4.6% yield = value floor.</td></tr>
+        <tr><td>INOXWIND</td><td>🛑 Thesis broken. 7% ROE, 35x PE, declining earnings. Renewable theme ≠ good investment.</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Thesis Drift:</strong> ⛔ Cannot execute — no historical baselines. Save this dashboard as baseline.</p>
+  </div>
+  <div class="section">
+    <h2>News Pulse</h2>
+    <table>
+      <thead><tr><th>Stock</th><th>Key Event</th><th>Signal</th><th>Review?</th></tr></thead>
+      <tbody>
+        <tr><td>APTUS</td><td>Q4 PAT +26%, GNPA 1.19%→1.52%</td><td>🟢/🟡</td><td>❌</td></tr>
+        <tr><td>JKTYRE</td><td>Record revenue, 19% QoQ cost rise</td><td>🟢/🟡</td><td>❌</td></tr>
+        <tr><td>M&amp;M</td><td>FY26 PAT +35%, all brokerages Buy</td><td>🟢</td><td>❌</td></tr>
+        <tr><td>INFY</td><td>-38% YTD, ~1% growth expected</td><td>🔴</td><td>❌ (priced in)</td></tr>
+        <tr><td>JSL</td><td>Q4 PAT +41%, LPG shortage resolved</td><td>🟢/🟡</td><td>❌</td></tr>
+        <tr><td>HERO</td><td>Record Q4 +30%, stock -16% YTD</td><td>🟢/🟡</td><td>❌</td></tr>
+        <tr><td>EIDPARRY</td><td>Q4 loss, refinery closed, CEO warning</td><td>🔴</td><td>⚠️ Watch</td></tr>
+        <tr><td>GESHIP</td><td>Record Q4 +188%, Hormuz disruption</td><td>🟢/🟡</td><td>❌</td></tr>
+        <tr><td>ITC</td><td>Feb 2026 tax hike, -33% from high</td><td>🔴</td><td>✅ Already priced</td></tr>
+        <tr><td>INOXWIND</td><td>Q4 PAT -51%, revenue miss 25%, -51%</td><td>🔴</td><td>🛑 YES</td></tr>
+        <tr><td>BLS</td><td>Record FY26 +37%, stock -33%</td><td>🟢/🔴</td><td>❌</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Triggered thesis review:</strong> <span class="tag tag-fail">INOXWIND</span> — business deteriorating, management credibility damaged.</p>
+  </div>
+</div>
+
+<!-- BOTTLENECK + QUALITY -->
+<div class="grid-2">
+  <div class="section">
+    <h2>Bottleneck Hunter</h2>
+    <div class="bottleneck">
+      <p><span class="tag tag-buy">OWNER</span> <strong>GESHIP</strong> — Shipping capacity at 30-yr supply low. Tanker rates $175k+/day from Hormuz disruption. <em>Alpha: Medium (peak-cycle priced in)</em></p>
+      <p><span class="tag tag-buy">OWNER</span> <strong>INOXWIND</strong> — Wind turbine supply constrained by 500GW India target. <em>Alpha: Low (poor execution overwhelms theme)</em></p>
+      <p><span class="tag tag-warn">SENSITIVE</span> <strong>JSL</strong> — Nickel supply (Indonesia policy) + Chinese dumping risk.</p>
+      <p><span class="tag tag-warn">SENSITIVE</span> <strong>JKTYRE</strong> — Natural rubber (SE Asia) + carbon black; thin margin buffer.</p>
+      <p><span class="tag tag-warn">SENSITIVE</span> <strong>M&amp;M</strong> — Auto semis, EV component chain; partially mitigated by scale.</p>
+      <p><span class="tag tag-warn">SENSITIVE</span> <strong>INFY</strong> — AI/ML talent + H1B constraints; GenAI headwind to labor demand.</p>
+      <p><span class="tag tag-warn">SENSITIVE</span> <strong>HERO</strong> — 2W semis improving; commodity costs cyclical.</p>
+      <p><span class="tag tag-warn">SENSITIVE</span> <strong>BLS</strong> — Government contract / processing capacity; geopolitical.</p>
+      <p><span class="tag tag-hold">NEUTRAL</span> APTUS, ITC (regulatory risk dominates), EIDPARRY (govt policy).</p>
+      <p style="margin-top:8px"><strong>2nd-layer bottleneck not held:</strong> Data center power infra (transformers/UPS/cooling) — ABB India, Cummins India as proxies.</p>
+    </div>
+  </div>
+  <div class="section">
+    <h2>Portfolio Review Summary</h2>
+    <table>
+      <thead><tr><th>Metric</th><th>Value</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Concentration (Top 1)</td><td>Bonds 57.8%</td><td>Conservative</td></tr>
+        <tr><td>Concentration (Top 3)</td><td>Bonds+EIDPARRY+M&M = 70.5%</td><td>OK but bond-heavy</td></tr>
+        <tr><td>Stock quality pass rate</td><td>9/11 (82%)</td><td>Good</td></tr>
+        <tr><td>Worst performer</td><td>INOXWIND -₹1,669</td><td>❌ Sell</td></tr>
+        <tr><td>Best performer</td><td>APTUS +₹697</td><td>✅ Hold</td></tr>
+        <tr><td>Major sector gap</td><td>Healthcare, Banks, US/global</td><td>Diversification opportunity</td></tr>
+        <tr><td>Overall health</td><td>Good → Very Good (post rebalance)</td><td>⬆️</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- INVESTMENT RESEARCH KEY FINDINGS -->
+<div class="section">
+  <h2>Investment Research — Key Findings</h2>
+  <div class="grid-3">
+    <div class="card">
+      <div class="name">ITC <span class="tag tag-buy">BUY +10</span></div>
+      <div class="meta">29% ROE · 17x PE · 5.2% yield · net cash</div>
+      <div>80% cig monopoly with pricing power. Feb '26 tax hike -33% is overdone. Yield+quality combo in a market that hates tobacco = opportunity.</div>
+    </div>
+    <div class="card">
+      <div class="name">BLS <span class="tag tag-buy">BUY +5</span></div>
+      <div class="meta">30% ROE · 16x PE · 37% growth · PEG 0.46</div>
+      <div>Best GARP in portfolio. Govt visa outsourcing moat (46+ clients). Stock -33% despite record earnings — rare disconnect to exploit.</div>
+    </div>
+    <div class="card">
+      <div class="name">HERO <span class="tag tag-buy">BUY +2</span></div>
+      <div class="meta">28.5% ROE · 17x PE · debt-free · 3.7% yield</div>
+      <div>World's largest 2W maker for 25 years. Record earnings, -16% YTD. Market pricing EV extinction, ignoring 10yr+ ICE moat in rural India.</div>
+    </div>
+    <div class="card">
+      <div class="name">INOXWIND <span class="tag tag-sell">SELL ALL</span></div>
+      <div class="meta">7% ROE · 35x PE · Q4 -51% · stock -51%</div>
+      <div>Poor execution, low ROE, high PE. Mgmt guided 75% growth with zero current credibility. Renewable tailwind ≠ investable business.</div>
+    </div>
+    <div class="card">
+      <div class="name">EIDPARRY <span class="tag tag-sell">SELL -12</span></div>
+      <div class="meta">8% ROE · 1.5% margin · Q4 loss · -34% 1yr</div>
+      <div>Sugar bleeding. Value is in Coromandel stake. Halve position, keep rest for M&A/restructuring optionality.</div>
+    </div>
+    <div class="card">
+      <div class="name">INFY <span class="tag tag-hold">HOLD</span></div>
+      <div class="meta">33% ROE · 14x PE · 4.6% yield · $2.8B cash</div>
+      <div>Value play, not growth. Fortress balance sheet compensates for ~1% growth. Hold for yield+optionality.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="text-align:center;color:var(--text3);font-size:.8rem">
+  <p>AI Berkshire Portfolio Dashboard · Skills: portfolio-review · thesis-tracker · thesis-drift · news-pulse · quality-screen · bottleneck-hunter · investment-checklist · investment-research</p>
+  <p>Data cutoff: July 12, 2026 · Not investment advice · For research &amp; learning purposes</p>
+</div>
+
+</div>
+</body>
+</html>
