@@ -16,7 +16,8 @@
 ☐ /thesis-drift /Users/dev/Downloads/holdings.csv generat html report in english 
 ☐ /news-pulse /Users/dev/Downloads/holdings.csv generat html report in english 
 
-Run all below sklls for stocks and bonds in "/Users/dev/Downloads/holdings.csv", "/Users/dev/Downloads/positions.csv &
+
+Run all below sklls for stocks and bonds in "/Users/dev/Downloads/holdings.csv", "/Users/dev/Downloads/positions.csv,
 KPIL, M&M, ATUL, 
 BLS, GESHIP, JKTYRE, JSL, APTUS,
 JSWDULUX, CHENNPETRO, JSWSTEEL, HEROMOTOCO, BPCL, HINDPETRO,
@@ -24,8 +25,9 @@ ECLERX, PARADEEP, Lupin,
 ITC, IDFCFIRSTB, MANAPPURAM, KARNAKA, SOUTHBANK, NATCOPHARM, TMPV, TMPC, DRREDDY, INFY, ZYDUSLIFE, AMARAJABAT, EXIDEIND,
 TATACHEM, STOVEKRAFT, ICICIBANK, CIPLA, MAHINDRA, BAJAJ-AUT0, BIOCON, KALYANKJIL, TECHM, PETRONET, TMB, IRFC, HEROMOTOCO,
 INDUSINDBK, CUPID, ICICILOMB, FEDERALBNK, KARURVYSYA, TATASTEEL, JYOTHYLAB, INDHOTEL, ZENSARTECH
-and consolidate into html/dashboard.html
-include stock, bond buy/sell qty suggestions and charts
+and consolidate  all reports in it's own tab into html/dashboard.html
+include tab for buy/sell qty suggestions in holdings & positions 
+include tab for buy qty suggestions stocks not in holdings & positions
 ☐ /portfolio-review 
 ☐ /thesis-tracker
 ☐ /thesis-drift 
