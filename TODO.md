@@ -1,4 +1,3 @@
-```text
 Run the following investment analysis skills.
 
 Inputs
@@ -125,4 +124,3 @@ Requirements
     with clear reasoning for each recommendation.
 
 If any ticker is invalid or delisted, report it separately instead of failing the run.
-```
