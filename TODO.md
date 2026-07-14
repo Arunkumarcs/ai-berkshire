@@ -28,39 +28,7 @@ html/dashboard.html
 
 Requirements
 
-1. Create one tab for each skill/report.
-2. Add a "Buy / Sell Suggestions" tab for existing holdings and positions containing:
-   - Symbol
-   - Current Qty
-   - Suggested Action (Buy / Hold / Reduce / Exit)
-   - Suggested Qty
-   - Target Allocation
-   - Confidence Score
-   - Reasoning
-3. Add a "New Buy Opportunities" tab for stocks that are NOT currently present in holdings or positions containing:
-   - Symbol
-   - Suggested Buy Qty
-   - Suggested Allocation %
-   - Entry Zone
-   - Stop Loss
-   - Target
-   - Conviction Score
-   - Investment Thesis
-4. Use sortable tables and charts wherever appropriate.
-5. Include timestamps indicating when the data and news were fetched.
-6. Highlight any conflicting signals between:
-   - valuation
-   - momentum
-   - quality
-   - news
-   - thesis
-7. Produce an overall portfolio score (0–100).
-8. End with a prioritized action list:
-    - Buy immediately
-    - Accumulate on dips
-    - Hold
-    - Trim
-    - Exit
-    with clear reasoning for each recommendation.
-
-If any ticker is invalid or delisted, report it separately instead of failing the run.
+1. Create one tab for each skill/report with skill used.
+2. Add a "Buy / Sell Suggestions" tab for existing holdings and positions with how many qty i need to buy or sell
+3. Add a "New Buy Opportunities" tab for stocks that are NOT currently present in holdings or positions with how many qty i need to buy or sell
+4. End with a prioritized action
