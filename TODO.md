@@ -27,7 +27,6 @@ Generate a consolidated dashboard at:
 html/dashboard.html
 
 Requirements
-Requirements
 
 1. Create a separate tab for each analysis skill/report, clearly showing the skill used.
 2. Add a "Buy / Sell Suggestions" tab for existing holdings and positions, including:
