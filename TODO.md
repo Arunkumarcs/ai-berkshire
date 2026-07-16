@@ -27,8 +27,16 @@ Generate a consolidated dashboard at:
 html/dashboard.html
 
 Requirements
+Requirements
 
-1. Create one tab for each skill/report with skill used.
-2. Add a "Buy / Sell Suggestions" tab for existing holdings and positions with how many qty i need to buy or sell
-3. Add a "New Buy Opportunities" tab for stocks that are NOT currently present in holdings or positions with how many qty i need to buy or sell
-4. End with a prioritized action
+1. Create a separate tab for each analysis skill/report, clearly showing the skill used.
+2. Add a "Buy / Sell Suggestions" tab for existing holdings and positions, including:
+   - Recommended action (Buy / Hold / Sell)
+   - Suggested quantity to buy or sell
+3. Add a "New Buy Opportunities" tab for stocks that are not currently present in holdings or positions, including:
+   - Recommended action
+   - Suggested quantity to buy
+4. Include a "Forecast" tab with future outlook and projections.
+5. End the report with a "Prioritized Action Plan", listing recommendations in order of importance.
+6. Use a "sidebar-based UI", with all report tabs accessible from the left sidebar.
+7. When a stock is clicked from any tab, open a popup/modal that consolidates all analysis for that stock across every tab in a single view.
