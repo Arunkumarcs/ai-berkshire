@@ -140,6 +140,10 @@ reports/{company}/
 - Commit messages in English, clearly describing what changed
 - Do not push intermediate files (e.g., data_collection.md), only final reports
 
+## Dashboard UI Template
+
+The canonical dashboard format is `html/sample.html`: sidebar navigation, tab-based content sections for each analysis skill, stock click-to-modal showing consolidated cross-skill data. Use this as the template for all future dashboard work.
+
 ## Common Commands
 
 ```bash

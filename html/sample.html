@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Berkshire — Consolidated Dashboard</title>
+<style>
+:root {
+  --bg: #f5f7fa;
+  --bg2: #ffffff;
+  --sidebar: #1a1d2e;
+  --sidebar-hover: #252839;
+  --sidebar-active: #2d6a4f;
+  --text: #1a1d2e;
+  --text2: #6b7280;
+  --border: #e5e7eb;
+  --accent: #2d6a4f;
+  --accent2: #40916c;
+  --gain: #16a34a;
+  --loss: #dc2626;
+  --hold: #f59e0b;
+  --card-shadow: 0 1px 3px rgba(0,0,0,.1);
+  --modal-overlay: rgba(0,0,0,.5);
+  --nav-width: 220px;
+  --font: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --font-mono: 'SF Mono','Fira Code','Cascadia Code',monospace;
+}
+[data-theme=dark] {
+  --bg: #0f1117;
+  --bg2: #1a1d2e;
+  --sidebar: #0b0d14;
+  --sidebar-hover: #1a1d2e;
+  --sidebar-active: #2d6a4f;
+  --text: #e5e7eb;
+  --text2: #9ca3af;
+  --border: #2d3148;
+  --card-shadow: 0 1px 3px rgba(0,0,0,.3);
+  --modal-overlay: rgba(0,0,0,.7);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden}
+a{color:var(--accent2);text-decoration:none}
+.sidebar{width:var(--nav-width);background:var(--sidebar);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;transition:transform .2s}
+.sidebar-brand{padding:16px 18px;font-size:15px;font-weight:700;color:#fff;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
+.sidebar-brand span{color:var(--accent2)}
+.nav-list{list-style:none;padding:8px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;color:rgba(255,255,255,.55);cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;border-left:3px solid transparent}
+.nav-item:hover{color:#fff;background:var(--sidebar-hover)}
+.nav-item.active{color:#fff;background:var(--sidebar-active);border-left-color:var(--accent2);font-weight:600}
+.nav-item .ico{width:18px;text-align:center;font-size:14px}
+.main{flex:1;margin-left:var(--nav-width);min-height:100vh;display:flex;flex-direction:column}
+.header{height:var(--header-height);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:50}
+.header h1{font-size:16px;font-weight:600}
+.header-actions{display:flex;align-items:center;gap:12px}
+.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:6px 10px;cursor:pointer;color:var(--text);font-size:13px;display:flex;align-items:center;gap:4px}
+.theme-toggle:hover{background:var(--border)}
+.content{padding:20px 24px;flex:1}
+.tab{display:none}
+.tab.active{display:block}
+.tab-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.tab-desc{color:var(--text2);margin-bottom:16px;font-size:13px}
+.stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;flex:1;min-width:140px;box-shadow:var(--card-shadow)}
+.stat-card .label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px}
+.stat-card .value{font-size:20px;font-weight:700}
+.stat-card .sub{font-size:11px;color:var(--text2);margin-top:2px}
+.stat-card .value.gain{color:var(--gain)}
+.stat-card .value.loss{color:var(--loss)}
+table{width:100%;border-collapse:collapse;background:var(--bg2);border-radius:8px;overflow:hidden;box-shadow:var(--card-shadow);margin-bottom:16px}
+th{text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);background:var(--bg);border-bottom:1px solid var(--border);font-weight:600}
+td{padding:9px 12px;font-size:13px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(45,106,79,.04)}
+td.num{font-family:var(--font-mono);text-align:right;font-size:12px}
+td.num.gain{color:var(--gain)}
+td.num.loss{color:var(--loss)}
+td.center{text-align:center}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-sb{background:#d1fae5;color:#065f46}
+.badge-b{background:#dbeafe;color:#1e40af}
+.badge-h{background:#fef3c7;color:#92400e}
+.badge-s{background:#fee2e2;color:#991b1b}
+[data-theme=dark] .badge-sb{background:#064e3b;color:#6ee7b7}
+[data-theme=dark] .badge-b{background:#1e3a5f;color:#93c5fd}
+[data-theme=dark] .badge-h{background:#78350f;color:#fcd34d}
+[data-theme=dark] .badge-s{background:#7f1d1d;color:#fca5a5}
+.badge-p1{background:#fee2e2;color:#991b1b}
+.badge-p2{background:#fef3c7;color:#92400e}
+.badge-p3{background:#e0e7ff;color:#3730a3}
+[data-theme=dark] .badge-p1{background:#7f1d1d;color:#fca5a5}
+[data-theme=dark] .badge-p2{background:#78350f;color:#fcd34d}
+[data-theme=dark] .badge-p3{background:#312e81;color:#a5b4fc}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--modal-overlay);z-index:999;justify-content:center;align-items:flex-start;padding:40px 20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border-radius:12px;max-width:900px;width:100%;padding:28px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3);margin:auto}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text2);padding:4px 8px;border-radius:4px}
+.modal-close:hover{background:var(--border);color:var(--text)}
+.modal h2{font-size:20px;margin-bottom:4px}
+.modal .ticker{color:var(--text2);font-size:13px;font-family:var(--font-mono)}
+.modal .price-large{font-size:32px;font-weight:700;margin:8px 0}
+.modal .price-change{font-size:14px;margin-left:8px}
+.modal-tabs{display:flex;gap:4px;margin:12px 0;border-bottom:1px solid var(--border);padding-bottom:0;flex-wrap:wrap}
+.modal-tab{padding:6px 12px;font-size:12px;cursor:pointer;border-radius:4px 4px 0 0;color:var(--text2);border:1px solid transparent;border-bottom:none;transition:all .1s}
+.modal-tab:hover{background:var(--bg);color:var(--text)}
+.modal-tab.active{background:var(--bg);color:var(--accent2);font-weight:600;border-color:var(--border)}
+.modal-section{display:none;padding:12px 0}
+.modal-section.active{display:block}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.modal-box{background:var(--bg);border-radius:8px;padding:14px}
+.modal-box h4{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px}
+.modal-box .row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.modal-box .row .val{font-family:var(--font-mono);font-size:12px}
+.modal-full{grid-column:1/-1}
+.deep-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.deep-item{padding:8px 10px;background:var(--bg2);border-radius:6px;border:1px solid var(--border)}
+.deep-item .author{font-weight:600;font-size:12px;color:var(--accent2);margin-bottom:3px}
+.deep-item p{font-size:12px;color:var(--text2);line-height:1.4}
+.search-bar{margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:13px;outline:none}
+.search-bar input:focus{border-color:var(--accent2)}
+.search-bar select{padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:13px;outline:none}
+.menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px}
+.clickable{cursor:pointer}
+.clickable:hover td{background:rgba(45,106,79,.08)!important}
+.chip{display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600;margin:1px}
+.chip-risk{background:rgba(220,38,38,.12);color:var(--loss)}
+.chip-cat{background:rgba(22,163,74,.12);color:var(--gain)}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .menu-toggle{display:block}
+  .modal-grid{grid-template-columns:1fr}
+  .deep-grid{grid-template-columns:1fr}
+}
+.sub-section{margin-top:20px}
+.sub-section .sub-title{font-size:16px;font-weight:600;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+<div class="sidebar-brand">&#9670; AI <span>Berkshire</span></div>
+<ul class="nav-list" id="navList"></ul>
+</nav>
+
+<div class="main">
+<div class="header">
+<button class="menu-toggle" id="menuToggle">&#9776;</button>
+<h1 id="pageTitle">Dashboard</h1>
+<div class="header-actions">
+<button class="theme-toggle" id="themeToggle">&#9790; <span id="themeLabel">Dark</span></button>
+</div>
+</div>
+<div class="content" id="content">
+<div id="tab-portfolio" class="tab active"></div>
+<div id="tab-thesis-tracker" class="tab"></div>
+<div id="tab-thesis-drift" class="tab"></div>
+<div id="tab-news-pulse" class="tab"></div>
+<div id="tab-quality-screen" class="tab"></div>
+<div id="tab-bottleneck" class="tab"></div>
+<div id="tab-checklist" class="tab"></div>
+<div id="tab-research" class="tab"></div>
+<div id="tab-buy-sell" class="tab"></div>
+<div id="tab-opportunities" class="tab"></div>
+<div id="tab-forecast" class="tab"></div>
+<div id="tab-action-plan" class="tab"></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+<div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+const NAV_ITEMS = [
+  {id:'portfolio',label:'Portfolio Review',ico:'📊'},
+  {id:'thesis-tracker',label:'Thesis Tracker',ico:'📝'},
+  {id:'thesis-drift',label:'Thesis Drift',ico:'📈'},
+  {id:'news-pulse',label:'News Pulse',ico:'📰'},
+  {id:'quality-screen',label:'Quality Screen',ico:'✨'},
+  {id:'bottleneck',label:'Bottleneck Hunter',ico:'🔗'},
+  {id:'checklist',label:'Investment Checklist',ico:'✅'},
+  {id:'research',label:'Investment Research',ico:'🔍'},
+  {id:'buy-sell',label:'Buy / Sell Suggestions',ico:'💰'},
+  {id:'opportunities',label:'New Buy Opportunities',ico:'💫'},
+  {id:'forecast',label:'Forecast',ico:'🔮'},
+  {id:'action-plan',label:'Action Plan',ico:'🎯'}
+];
+
+const TODAY = '2026-07-19';
+const fmt = (n,d=2) => n!=null&&isFinite(n)?n.toFixed(d):'-';
+const pnl = (cur,avg,qty) => qty>0?((cur-avg)*qty):0;
+const pnlPct = (cur,avg) => avg>0?((cur-avg)/avg*100):0;
+const recBadge = r => {
+  const m = {'Strong Buy':'sb','Buy':'b','Hold':'h','Sell':'s','Accumulate':'sb','Reduce':'s'};
+  const c = m[r]||'h';
+  return `<span class="badge badge-${c}">${r}</span>`;
+};
+
+// ============ DATA ============
+
+const HOLDINGS = [
+  {sym:'BLS',qty:38,avgCost:263.79,ltp:236},
+  {sym:'FEDERALBNK',qty:10,avgCost:329.25,ltp:349},
+  {sym:'GESHIP',qty:6,avgCost:1411.48,ltp:1345},
+  {sym:'HEROMOTOCO',qty:4,avgCost:4937.24,ltp:4884},
+  {sym:'ICICIBANK',qty:5,avgCost:1419.08,ltp:1435},
+  {sym:'INFY',qty:17,avgCost:1070.56,ltp:1096},
+  {sym:'ITC',qty:64,avgCost:289.16,ltp:281},
+  {sym:'JYOTHYLAB',qty:25,avgCost:198.85,ltp:200},
+  {sym:'LUPIN',qty:2,avgCost:2489.50,ltp:2443},
+  {sym:'M_M',qty:2,avgCost:3076.60,ltp:3179,disp:'M&M'},
+  {sym:'NATCOPHARM',qty:3,avgCost:966.37,ltp:980},
+  {sym:'PETRONET',qty:12,avgCost:277.57,ltp:274},
+  {sym:'ZYDUSLIFE',qty:5,avgCost:1138.40,ltp:1131}
+];
+
+const BONDS = [
+  {sym:'1075SFL28A',qty:3,ltp:9990,desc:'SFL 10.75% 28'},
+  {sym:'1125SSFL28',qty:3,ltp:9910,desc:'SSFL 11.25% 28'},
+  {sym:'1135AFSL28',qty:3,ltp:10240,desc:'AFSL 11.35% 28'},
+  {sym:'11UFL28',qty:3,ltp:7200,desc:'UFL 11% 28'},
+  {sym:'1225IFL28-N0',qty:3,ltp:7750,desc:'IFL 12.25% 28'},
+  {sym:'1280ACAP28',qty:3,ltp:9942,desc:'ACAP 12.80% 28'},
+  {sym:'12KFL27',qty:3,ltp:9841,desc:'KFL 12% 27'}
+];
+
+const POSITIONS = [];
+
+const UNIVERSE = {
+  BLS:{pe:14.1,pb:3.95,roe:32.7,de:0.09,div:0.85,mcap:9700,fv:340,rec:'Strong Buy',risk:['Govt contract dependency','Visa policy risk'],cat:['UIDAI ₹2KCr deal','AI visa processing'],score:82,infoLvl:'A'},
+  GESHIP:{pe:7.0,pb:1.2,roe:18.8,de:0.06,div:3.4,mcap:20600,fv:1865,rec:'Strong Buy',risk:['Shipping cycle downturn','Geopolitical risk'],cat:['Fleet expansion','Strait disruption booster'],score:78,infoLvl:'A'},
+  HEROMOTOCO:{pe:17.0,pb:5.1,roe:28.3,de:0.12,div:3.8,mcap:97500,fv:5849,rec:'Buy',risk:['Rural demand','EV disruption'],cat:['Record PAT','VIDA EV +190%'],score:76,infoLvl:'A'},
+  ICICIBANK:{pe:19.0,pb:2.8,roe:17.2,de:null,div:0.8,mcap:1030000,fv:1700,rec:'Strong Buy',risk:['NIM compression','Global slowdown'],cat:['Q1 beat','Loan growth 19.6%'],score:85,infoLvl:'A'},
+  INFY:{pe:14.8,pb:4.6,roe:31.9,de:0.08,div:4.6,mcap:445000,fv:1469,rec:'Buy',risk:['US recession','IT spend cuts'],cat:['AI pipeline $3B+','Record deal TCV'],score:74,infoLvl:'A'},
+  ITC:{pe:16.8,pb:4.8,roe:29.3,de:0,div:5.2,mcap:350000,fv:343,rec:'Hold',risk:['GST 40% hike','Cig vol decline'],cat:['FMCG profit +51%','Hotel demerger'],score:68,infoLvl:'A'},
+  JYOTHYLAB:{pe:22.8,pb:5.5,roe:21.7,de:0,div:1.8,mcap:7355,fv:245,rec:'Hold',risk:['Henkel licence loss','Input inflation'],cat:['Exo dishwash pivot','Debt-free'],score:60,infoLvl:'B'},
+  LUPIN:{pe:20.6,pb:3.2,roe:23.8,de:0.31,div:0.5,mcap:114128,fv:2483,rec:'Buy',risk:['US FDA observations','Pricing pressure'],cat:['Eribulin approval','ROE turnaround'],score:73,infoLvl:'A'},
+  M_M:{pe:24.8,pb:3.7,roe:20.8,de:0.06,div:1.0,mcap:395343,fv:4000,rec:'Strong Buy',risk:['Auto cycle downturn','EV costs'],cat:['SUV share 27.3%','BEV 7e strong'],score:81,infoLvl:'A'},
+  NATCOPHARM:{pe:12.4,pb:1.9,roe:16.9,de:0.08,div:0.7,mcap:17551,fv:1021,rec:'Hold',risk:['Revlimid LOE','Regulatory delays'],cat:['Olaparib approval','Africa expansion'],score:65,infoLvl:'B'},
+  PETRONET:{pe:10.5,pb:1.9,roe:18.6,de:0.11,div:3.6,mcap:41873,fv:335,rec:'Buy',risk:['Gas price volatility','Take-or-pay risk'],cat:['Dahej expansion','New LNG contracts'],score:75,infoLvl:'A'},
+  ZYDUSLIFE:{pe:20.8,pb:3.5,roe:18.3,de:0.18,div:1.1,mcap:112877,fv:1190,rec:'Hold',risk:['US pricing','Inspection risks'],cat:['$166M Assertio buy','₹1KCr buyback'],score:67,infoLvl:'A'},
+  FEDERALBNK:{pe:18.9,pb:1.5,roe:12.3,de:null,div:1.2,mcap:86165,fv:360,rec:'Buy',risk:['NIM pressure','Regional bank'],cat:['Record PAT Q1','NRI franchise'],score:70,infoLvl:'A'},
+  KPIL:{pe:17.1,pb:3.2,roe:17.4,de:1.49,div:0,mcap:8097,fv:null,rec:'Hold',risk:['High debt','Policy dependence'],cat:['Solar IPP expansion'],score:45},
+  ATUL:{pe:30.2,pb:6.8,roe:10.3,de:0.05,div:0.3,mcap:18033,fv:7643,rec:'Buy',risk:['Slow revenue growth'],cat:['Specialty chems demand'],score:55},
+  JKTYRE:{pe:13.3,pb:1.65,roe:17.6,de:0.32,div:2.1,mcap:11636,fv:543,rec:'Buy',risk:['RM inflation'],cat:['Radialization demand'],score:68},
+  JSL:{pe:18.6,pb:3.1,roe:17.8,de:0.18,div:0.8,mcap:59507,fv:870,rec:'Strong Buy',risk:['Nickel volatility'],cat:['Capacity expansion','EPS +42%'],score:72},
+  APTUS:{pe:16.3,pb:2.5,roe:20.1,de:0.12,div:0.3,mcap:15220,fv:null,rec:'Buy',risk:['Rate sensitivity'],cat:['Affordable housing niche'],score:62},
+  CHENNPETRO:{pe:5.5,pb:1.55,roe:32.7,de:0.18,div:0.67,mcap:16802,fv:1921,rec:'Strong Buy',risk:['Refining margin cycle'],cat:['85% 1Y return','Debt-free'],score:88,infoLvl:'B'},
+  JSWSTEEL:{pe:14.1,pb:2.5,roe:15.0,de:0.72,div:1.5,mcap:302576,fv:1371,rec:'Buy',risk:['Global steel prices'],cat:['India capex cycle','Profit +537%'],score:64},
+  ECLERX:{pe:21.6,pb:4.2,roe:29.0,de:0.02,div:1.4,mcap:15252,fv:null,rec:'Buy',risk:['Client concentration'],cat:['BPM automation','Debt-free'],score:63},
+  PARADEEP:{pe:14.5,pb:2.1,roe:18.9,de:0.29,div:0.9,mcap:14877,fv:null,rec:'Hold',risk:['Subsidy policy'],cat:['Food security focus'],score:50},
+  IDFCFIRSTB:{pe:42.3,pb:2.2,roe:3.8,de:null,div:0,mcap:69237,fv:79,rec:'Sell',risk:['Low ROE','Expensive PE'],cat:['Retail deposit franchise'],score:30},
+  MANAPPURAM:{pe:30.5,pb:2.1,roe:7.0,de:3.8,div:1.5,mcap:30571,fv:360,rec:'Hold',risk:['Gold price risk','Falling ROE'],cat:['Bain Capital investment'],score:42},
+  KTKBANK:{pe:8.0,pb:0.82,roe:10.4,de:0.40,div:1.83,mcap:10488,fv:275,rec:'Strong Buy',risk:['Regional concentration'],cat:['Improving asset quality'],score:72,infoLvl:'B'},
+  SOUTHBANK:{pe:7.7,pb:1.05,roe:13.5,de:null,div:0,mcap:11677,fv:48,rec:'Buy',risk:['Low NIM','Small cap'],cat:['Turnaround story'],score:60},
+  DRREDDY:{pe:25.2,pb:3.7,roe:11.2,de:0.09,div:1.8,mcap:101137,fv:1332,rec:'Hold',risk:['US pricing erosion','Ozempic generic fear'],cat:['Q1 results Jul 22'],score:55},
+  ARE_M:{pe:21.2,pb:4.1,roe:10.0,de:0.15,div:0.6,mcap:16499,fv:950,rec:'Hold',risk:['Lead-acid demand peaking'],cat:['Li-ion cell production'],disp:'ARE&M',score:50},
+  EXIDEIND:{pe:41.9,pb:4.8,roe:6.2,de:0.08,div:1.2,mcap:36979,fv:377,rec:'Sell',risk:['Low ROE','EV disruption'],cat:['Li-ion expansion'],score:35},
+  TATACHEM:{pe:null,pb:2.5,roe:1.3,de:0.25,div:1.9,mcap:17856,fv:722,rec:'Sell',risk:['FY26 net loss'],cat:['US soda ash rebound'],score:28},
+  STOVEKRAFT:{pe:59.1,pb:8.2,roe:8.6,de:0.11,div:0,mcap:2481,fv:719,rec:'Hold',risk:['PE 59x','Margin pressure'],cat:['Premiumization'],score:38},
+  CIPLA:{pe:30.1,pb:3.5,roe:11.6,de:0.16,div:0.8,mcap:114613,fv:1464,rec:'Buy',risk:['US price erosion'],cat:['Respiratory franchise'],score:58},
+  BAJAJ_AUTO:{pe:26.5,pb:5.1,roe:29.2,de:0.02,div:2.2,mcap:286023,fv:10892,rec:'Buy',risk:['EV disruption','Export volatility'],cat:['29% ROE','Exports growth'],disp:'BAJAJ-AUTO',score:72,infoLvl:'A'},
+  BIOCON:{pe:192.3,pb:3.9,roe:1.2,de:0.55,div:0,mcap:71433,fv:422,rec:'Sell',risk:['PE 192x','Thin margins'],cat:['Biosimilar pipeline'],score:18},
+  KALYANKJIL:{pe:43.0,pb:6.5,roe:24.8,de:0.12,div:0,mcap:59321,fv:664,rec:'Strong Buy',risk:['Gold price volatility'],cat:['Store expansion','Unorganized gains'],score:66},
+  TECHM:{pe:30.9,pb:4.3,roe:17.5,de:0.18,div:3.5,mcap:150023,fv:1584,rec:'Hold',risk:['Margin pressure','Client caution'],cat:['Q1 beat','67% analysts bullish'],score:55},
+  TMB:{pe:9.3,pb:1.35,roe:14.0,de:null,div:1.5,mcap:12336,fv:890,rec:'Buy',risk:['Small cap liquidity'],cat:['Low NPA 0.18%'],score:68},
+  IRFC:{pe:16.6,pb:3.2,roe:12.8,de:6.8,div:2.4,mcap:116244,fv:null,rec:'Sell',risk:['High leverage','Rate sensitivity'],cat:['Railway capex pipeline'],score:32},
+  INDUSINDBK:{pe:90.0,pb:2.3,roe:1.36,de:null,div:0.9,mcap:80033,fv:null,rec:'Sell',risk:['ROE collapsed'],cat:['Asset quality recovery'],score:22},
+  CUPID:{pe:267,pb:5.8,roe:27.3,de:0.05,div:0,mcap:28881,fv:null,rec:'Sell',risk:['PE 267x','SEBI warning'],cat:['103% revenue growth'],score:25},
+  ICICIGI:{pe:33.3,pb:6.8,roe:17.8,de:null,div:0.35,mcap:80367,fv:2108,rec:'Buy',risk:['Competition','Regulatory'],cat:['Insurance penetration'],score:62,infoLvl:'A'},
+  KARURVYSYA:{pe:11.9,pb:2.09,roe:18.7,de:0.15,div:0.85,mcap:29933,fv:null,rec:'Strong Buy',risk:['Low promoter holding'],cat:['47% 5yr profit CAGR'],score:78,infoLvl:'B'},
+  TATASTEEL:{pe:21.4,pb:1.8,roe:11.4,de:0.52,div:2.5,mcap:231269,fv:163,rec:'Hold',risk:['Steel cycle','Dutch criminal case'],cat:['India demand improvement'],score:48},
+  INDHOTEL:{pe:49.7,pb:7.8,roe:18.1,de:0.18,div:0.45,mcap:103491,fv:802,rec:'Buy',risk:['PE 50x','Travel slowdown'],cat:['645 hotel portfolio','15% rev growth'],score:62},
+  ZENSARTECH:{pe:15.6,pb:2.45,roe:15.2,de:0,div:2.78,mcap:12088,fv:572,rec:'Buy',risk:['IT spending uncertainty'],cat:['$210M deal win'],score:65,infoLvl:'B'},
+  WIPRO:{pe:13.3,pb:2.78,roe:16.0,de:0.23,div:6.37,mcap:175825,fv:220,rec:'Buy',risk:['JPM downgrade','Weak growth'],cat:['AI platform Lab45','Cost optimisation'],score:55},
+  CEATLTD:{pe:20.6,pb:2.8,roe:14.5,de:0.25,div:1.8,mcap:14359,fv:3869,rec:'Hold',risk:['Tyre cyclicality'],cat:['PAT +52% YoY'],score:52},
+  JSWDULUX:{pe:7.1,pb:3.5,roe:104.4,de:0.01,div:0.2,mcap:14024,fv:3399,rec:'Hold',risk:['Revenue -10%','Paints competition'],cat:['JSW ownership','Low PE'],disp:'JSWDULUX',score:55},
+  EMMVEE:{pe:20.0,pb:6.33,roe:44.7,de:3.6,div:0,mcap:23484,fv:480,rec:'Buy',risk:['High debt','China import dependence'],cat:['Solar boom','7.8→16.3 GW expansion'],score:65,infoLvl:'B'},
+  TMPV:{pe:18.5,pb:3.2,roe:17.5,de:0.28,div:1.2,mcap:8522,fv:null,rec:'Hold',risk:['Cyclical demand'],cat:['Auto anc recovery'],score:50},
+  TMCV:{pe:15.2,pb:2.85,roe:19.8,de:0.15,div:0.9,mcap:11255,fv:null,rec:'Buy',risk:['Execution risk'],cat:['CV cycle upswing'],score:58}
+};
+
+const DEEP = {
+  BLS:{busModel:'Visa & passport outsourcing to 30+ governments',moat:'Government empanelment creates natural barrier; scale-driven cost advantage',mgmt:'Promoter-led; strong execution track record; consistent dividend',finStrength:'Net cash; negative working capital; 32.7% ROE; FCF yield 7.7%',dyp:'Simple recurring-revenue model; likes scalability',buffet:'Service franchise with long-term government contracts; defensible moat',munger:'Easy to understand; watch single-bid renewal risk',lilu:'Monitor govt contract renewals; moat is narrow but real',thesisStatus:'Active',moatAssessment:'Narrow',checklist:'6/8 pass',qualityScore:82,news:'Jul 17: Won ₹2,055Cr UIDAI Aadhaar contract; Sypha AI partnership',forecast:'Bull 420 / Base 340 / Bear 220',action:'Accumulate on dips <230'},
+  GESHIP:{busModel:'International crude/products tanker shipping; 41-vessel fleet',moat:'India\'s largest private fleet; long-term customer relationships; low debt',mgmt:'Conservative; strong balance sheet discipline; 17th consecutive dividend',finStrength:'D/E 0.06; strong FCF; PAT ₹2,943Cr FY26 (+26% YoY)',dyp:'Well-run commodity business; likes management quality',buffet:'Cyclical — attractive at current P/E 7x; buy when distressed',munger:'Tough industry; but low-debt approach aligns with his thinking',lilu:'Good capital allocator; likes owner-operator mindset',thesisStatus:'Active',moatAssessment:'Narrow',checklist:'6/8 pass',qualityScore:78,news:'Jul 15: Strait of Hormuz disruption boosted tanker rates; bonus issue approved',forecast:'Bull 2200 / Base 1902 / Bear 1200',action:'Accumulate; post-bonus stability'}
+};
+
+// ============ PORTFOLIO ============
+function renderPortfolio(){
+  const h = HOLDINGS.filter(x=>x.qty>0);
+  const totalCost = h.reduce((s,x)=>s+x.qty*x.avgCost,0);
+  const totalVal = h.reduce((s,x)=>s+x.qty*x.ltp,0);
+  const totalPnl = totalVal - totalCost;
+  const dayChange = h.reduce((s,x)=>s+pnl(x.ltp,x.avgCost,x.qty),0);
+  const bondVal = BONDS.reduce((s,x)=>s+x.qty*x.ltp,0);
+
+  document.getElementById('tab-portfolio').innerHTML = `
+    <div class="tab-title">Portfolio Review</div>
+    <div class="tab-desc">Data as of ${TODAY} — Run: portfolio-review skill</div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="label">Total Invested</div><div class="value">₹${fmt(totalCost,0)}</div></div>
+      <div class="stat-card"><div class="label">Market Value (Eq)</div><div class="value">₹${fmt(totalVal,0)}</div></div>
+      <div class="stat-card"><div class="label">Bond Value</div><div class="value">₹${fmt(bondVal,0)}</div></div>
+      <div class="stat-card"><div class="label">Unrealised P&L</div><div class="value ${totalPnl>=0?'gain':'loss'}">${totalPnl>=0?'+':''}₹${fmt(totalPnl,0)}</div><div class="sub">${fmt(totalPnl/totalCost*100,1)}%</div></div>
+      <div class="stat-card"><div class="label">Holdings</div><div class="value">${h.length}</div><div class="sub">+ ${BONDS.length} bonds</div></div>
+    </div>
+    <table><thead><tr>
+      <th>Stock</th><th>Qty</th><th>Avg Cost</th><th>LTP</th><th>Invested</th><th>Current</th><th>P&L</th><th>Return</th><th>Port%</th><th>Rec</th>
+    </tr></thead><tbody>
+      ${h.map(x=>{
+        const p=pnl(x.ltp,x.avgCost,x.qty);
+        const pp=pnlPct(x.ltp,x.avgCost);
+        const portPct = totalVal>0 ? (x.qty*x.ltp/totalVal*100) : 0;
+        const u=UNIVERSE[x.sym];
+        return `<tr class="clickable" onclick="showStock('${x.sym}')">
+          <td><strong>${x.disp||x.sym}</strong></td>
+          <td class="num">${x.qty}</td>
+          <td class="num">${fmt(x.avgCost)}</td>
+          <td class="num">${fmt(x.ltp)}</td>
+          <td class="num">${fmt(x.qty*x.avgCost,0)}</td>
+          <td class="num">${fmt(x.qty*x.ltp,0)}</td>
+          <td class="num ${p>=0?'gain':'loss'}">${p>=0?'+':''}${fmt(p,0)}</td>
+          <td class="num ${pp>=0?'gain':'loss'}">${pp>=0?'+':''}${fmt(pp,1)}%</td>
+          <td class="num">${fmt(portPct,1)}%</td>
+          <td>${u?recBadge(u.rec):''}</td>
+        </tr>`;
+      }).join('')}
+    </tbody></table>
+
+    <div class="sub-section">
+      <div class="sub-title">Bond Holdings</div>
+      <table><thead><tr><th>Bond</th><th>Qty</th><th>LTP</th><th>Value</th></tr></thead><tbody>
+        ${BONDS.map(x=>`<tr><td><strong>${x.desc}</strong><br><span style="font-size:11px;color:var(--text2)">${x.sym}</span></td>
+          <td class="num">${x.qty}</td><td class="num">${fmt(x.ltp,0)}</td>
+          <td class="num">${fmt(x.qty*x.ltp,0)}</td></tr>`).join('')}
+        <tr style="font-weight:600"><td>Total Bonds</td><td></td><td></td><td class="num">${fmt(bondVal,0)}</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Portfolio Health Assessment</div>
+      <table><thead><tr><th>Metric</th><th>Current</th><th>Ideal</th><th>Status</th></tr></thead><tbody>
+        <tr><td>Largest holding %</td><td class="num">${fmt(Math.max(...h.map(x=>x.qty*x.ltp/totalVal*100)),1)}%</td><td class="num"><40%</td><td>✅</td></tr>
+        <tr><td>Top 3 holdings %</td><td class="num">${fmt(h.sort((a,b)=>b.qty*b.ltp-a.qty*a.ltp).slice(0,3).reduce((s,x)=>s+x.qty*x.ltp/totalVal*100,0),1)}%</td><td class="num">50-80%</td><td>✅</td></tr>
+        <tr><td>Total equity holdings</td><td class="num">${h.length}</td><td class="num">5-15</td><td>✅</td></tr>
+        <tr><td>Bonds allocation</td><td class="num">${fmt(bondVal/(bondVal+totalVal)*100,1)}%</td><td class="num">10-30%</td><td>✅</td></tr>
+        <tr><td>Overall health</td><td colspan="2" style="font-weight:600;color:var(--gain)">GOOD — Well diversified across 13 stocks + 7 bonds</td><td></td></tr>
+      </tbody></table>
+    </div>
+  `;
+}
+
+// ============ THESIS TRACKER ============
+function renderThesisTracker(){
+  const tracked = Object.keys(DEEP);
+  document.getElementById('tab-thesis-tracker').innerHTML = `
+    <div class="tab-title">Thesis Tracker</div>
+    <div class="tab-desc">Investment thesis status — Run: thesis-tracker skill</div>
+    <table><thead><tr>
+      <th>Stock</th><th>Business Model</th><th>Moat</th><th>Management</th><th>Financial Strength</th><th>Thesis</th><th>Moat</th>
+    </tr></thead><tbody>
+      ${tracked.map(sym=>{
+        const d=DEEP[sym]; if(!d) return '';
+        const moatCls = d.moatAssessment==='Wide'?'moat-wide':d.moatAssessment==='Narrow'?'moat-narrow':'moat-none';
+        const thesisCls = d.thesisStatus==='Active'?'badge-sb':d.thesisStatus==='Watch'?'badge-h':'badge-s';
+        return `<tr class="clickable" onclick="showStock('${sym}')">
+          <td><strong>${sym}</strong></td>
+          <td style="max-width:160px;font-size:12px">${d.busModel}</td>
+          <td style="font-size:12px;max-width:140px">${d.moat}</td>
+          <td style="font-size:12px;max-width:140px">${d.mgmt}</td>
+          <td style="font-size:12px;max-width:140px">${d.finStrength}</td>
+          <td><span class="badge ${thesisCls}">${d.thesisStatus}</span></td>
+          <td><div style="display:flex;align-items:center;gap:6px"><span style="font-size:11px;color:var(--text2)">${d.moatAssessment}</span></div></td>
+        </tr>`;
+      }).filter(Boolean).join('')}
+    </tbody></table>
+
+    <div class="sub-section">
+      <div class="sub-title">Universe Stocks — Quick Thesis View</div>
+      <table><thead><tr><th>Stock</th><th>PE</th><th>ROE</th><th>Quality Score</th><th>Risk</th><th>Catalyst</th><th>Verdict</th></tr></thead><tbody>
+        ${Object.keys(UNIVERSE).filter(s=>!DEEP[s]).sort((a,b)=>((UNIVERSE[b].score||0)-(UNIVERSE[a].score||0))).slice(0,20).map(sym=>{
+          const u=UNIVERSE[sym];
+          return `<tr class="clickable" onclick="showStock('${sym}')">
+            <td><strong>${sym}</strong></td>
+            <td class="num">${u.pe?fmt(u.pe,1):'-'}</td>
+            <td class="num">${fmt(u.roe,1)}%</td>
+            <td class="num"><strong>${u.score||'-'}</strong></td>
+            <td style="font-size:11px;max-width:120px">${u.risk?u.risk[0]:'-'}</td>
+            <td style="font-size:11px;max-width:120px">${u.cat?u.cat[0]:'-'}</td>
+            <td>${recBadge(u.rec)}</td>
+          </tr>`;
+        }).join('')}
+      </tbody></table>
+    </div>
+  `;
+}
+
+// ============ THESIS DRIFT ============
+function renderThesisDrift(){
+  document.getElementById('tab-thesis-drift').innerHTML = `
+    <div class="tab-title">Thesis Drift Detection</div>
+    <div class="tab-desc">Fact-based drift detection — Run: thesis-drift skill. Distinguishes fact changes from price/noise changes.</div>
+    <table><thead><tr>
+      <th>Stock</th><th>Original Thesis</th><th>Current Status</th><th>Key Change</th><th>Drift</th><th>Fact or Price?</th><th>Action</th>
+    </tr></thead><tbody>
+      <tr class="clickable" onclick="showStock('BLS')">
+        <td><strong>BLS</strong></td><td style="font-size:12px">Govt outsourcing + visa demand recovery</td>
+        <td><span class="badge badge-sb">Intact</span></td><td style="font-size:12px">Rev +36% FY26; UIDAI ₹2KCr contract win</td>
+        <td class="num gain">+2%</td><td style="font-size:12px">Fact — contract wins confirmed</td><td>Maintain / Add</td>
+      </tr>
+      <tr class="clickable" onclick="showStock('GESHIP')">
+        <td><strong>GESHIP</strong></td><td style="font-size:12px">Shipping cycle + fleet expansion + low debt</td>
+        <td><span class="badge badge-sb">Intact</span></td><td style="font-size:12px">PAT +188% Q4; Strait disruption boost</td>
+        <td class="num gain">+5%</td><td style="font-size:12px">Fact — earnings confirmed</td><td>Maintain</td>
+      </tr>
+      <tr class="clickable" onclick="showStock('ICICIBANK')">
+        <td><strong>ICICIBANK</strong></td><td style="font-size:12px">Retail franchise + NIM expansion + NPA recovery</td>
+        <td><span class="badge badge-sb">Intact</span></td><td style="font-size:12px">Q1 NII +12.7%; loan growth 19.6%</td>
+        <td class="num gain">+3%</td><td style="font-size:12px">Fact — strong Q1 beat</td><td>Maintain</td>
+      </tr>
+      <tr class="clickable" onclick="showStock('ITC')">
+        <td><strong>ITC</strong></td><td style="font-size:12px">Cigarette pricing power + FMCG turnaround</td>
+        <td><span class="badge badge-h">Watch</span></td><td style="font-size:12px">GST hike 28%→40% of RSP; -10-15% vol impact</td>
+        <td class="num loss">12%</td><td style="font-size:12px">Fact — regulatory change</td><td>Review thesis</td>
+      </tr>
+      <tr class="clickable" onclick="showStock('PETRONET')">
+        <td><strong>PETRONET</strong></td><td style="font-size:12px">Infra tollbooth + LNG demand + dividend</td>
+        <td><span class="badge badge-sb">Intact</span></td><td style="font-size:12px">Dahej expansion to 22.5mmtpa approved</td>
+        <td class="num gain">+1%</td><td style="font-size:12px">Fact — capacity expansion</td><td>Maintain</td>
+      </tr>
+      <tr class="clickable" onclick="showStock('M_M')">
+        <td><strong>M&M</strong></td><td style="font-size:12px">SUV leader + tractor cycle + EV optionality</td>
+        <td><span class="badge badge-sb">Intact</span></td><td style="font-size:12px">SUV share 27.3%; Q1 PAT +24%; BEV strong</td>
+        <td class="num gain">+4%</td><td style="font-size:12px">Fact — earnings beat</td><td>Maintain</td>
+      </tr>
+      <tr><td><strong>INFY</strong></td><td style="font-size:12px">IT services leader + AI pipeline + capital return</td>
+        <td><span class="badge badge-h">Watch</span></td><td style="font-size:12px">Q1 results Jul 23; FY27 guidance key</td>
+        <td class="num gain">0%</td><td style="font-size:12px">Pending — results not yet released</td><td>Wait for Q1</td>
+      </tr>
+      <tr><td><strong>CHENNPETRO</strong></td><td style="font-size:12px">Deep value refining play; PE 5.5x; ROE 32.7%</td>
+        <td><span class="badge badge-sb">Intact</span></td><td style="font-size:12px">GRM cycle strong; virtually debt-free</td>
+        <td class="num gain">+8%</td><td style="font-size:12px">Fact — strong refining margins</td><td>Initiate coverage</td>
+      </tr>
+      <tr><td><strong>EMMVEE</strong></td><td style="font-size:12px">Solar glass monopoly; 51% ROE compressor</td>
+        <td><span class="badge badge-sb">Intact</span></td><td style="font-size:12px">Capacity 7.8→16.3 GW expansion</td>
+        <td class="num gain">+6%</td><td style="font-size:12px">Fact — growth trajectory</td><td>Initiate coverage</td>
+      </tr>
+    </tbody></table>
+  `;
+}
+
+// ============ NEWS PULSE ============
+function renderNewsPulse(){
+  document.getElementById('tab-news-pulse').innerHTML = `
+    <div class="tab-title">News Pulse</div>
+    <div class="tab-desc">Latest 14-day events across portfolio & universe — Run: news-pulse skill</div>
+    <div class="search-bar">
+      <input id="npSearch" placeholder="Filter by stock name..." oninput="filterTable('npSearch','npTable')">
+      <select id="npFilter" onchange="filterTable('npSearch','npTable')">
+        <option value="">All Impact</option>
+        <option value="Positive">Positive</option>
+        <option value="Negative">Negative</option>
+        <option value="Neutral">Neutral</option>
+      </select>
+    </div>
+    <table id="npTable"><thead><tr>
+      <th>Date</th><th>Stock</th><th>Event</th><th>Impact</th><th>Skill Source</th>
+    </tr></thead><tbody>
+      <tr><td>2026-07-18</td><td class="clickable" onclick="showStock('ICICIBANK')"><strong>ICICIBANK</strong></td><td style="font-size:12px">Q1FY27: PAT ₹14,805Cr (+15.9% YoY); NIM 4.36%; loan growth 19.6%; asset quality at decadal best</td><td><span class="badge badge-sb">Positive</span></td><td>earnings-review</td></tr>
+      <tr><td>2026-07-17</td><td class="clickable" onclick="showStock('FEDERALBNK')"><strong>FEDERALBNK</strong></td><td style="font-size:12px">Q1FY27: Record PAT ₹1,177Cr (+37% YoY); NII +26%; GNPA 1.52% improving</td><td><span class="badge badge-sb">Positive</span></td><td>news-pulse</td></tr>
+      <tr><td>2026-07-17</td><td class="clickable" onclick="showStock('BLS')"><strong>BLS</strong></td><td style="font-size:12px">Won ₹2,055Cr UIDAI Aadhaar contract; partnership with Sypha for AI visa processing</td><td><span class="badge badge-sb">Positive</span></td><td>news-pulse</td></tr>
+      <tr><td>2026-07-15</td><td class="clickable" onclick="showStock('GESHIP')"><strong>GESHIP</strong></td><td style="font-size:12px">Board approved 2:1 bonus issue; Strait of Hormuz disruption boosting tanker rates</td><td><span class="badge badge-sb">Positive</span></td><td>news-pulse</td></tr>
+      <tr><td>2026-07-14</td><td class="clickable" onclick="showStock('ITC')"><strong>ITC</strong></td><td style="font-size:12px">Hotels demerger receives NCLT approval; GST hike 28%→40% of RSP negative for cig volumes</td><td><span class="badge badge-h">Mixed</span></td><td>earnings-team</td></tr>
+      <tr><td>2026-07-12</td><td class="clickable" onclick="showStock('INFY')"><strong>INFY</strong></td><td style="font-size:12px">Won $200M digital transformation deal from EU retailer; Topaz AI gaining traction</td><td><span class="badge badge-sb">Positive</span></td><td>investment-research</td></tr>
+      <tr><td>2026-07-12</td><td class="clickable" onclick="showStock('NATCOPHARM')"><strong>NATCOPHARM</strong></td><td style="font-size:12px">FDA tentative approval for Olaparib ($1.4B market); ₹2,500Cr South Africa investment</td><td><span class="badge badge-sb">Positive</span></td><td>thesis-tracker</td></tr>
+      <tr><td>2026-07-10</td><td class="clickable" onclick="showStock('M_M')"><strong>M&M</strong></td><td style="font-size:12px">BEV 7e receives 30,000+ bookings in 1 month; SUV price hike 2.7% announced</td><td><span class="badge badge-sb">Positive</span></td><td>investment-check list</td></tr>
+      <tr><td>2026-07-08</td><td class="clickable" onclick="showStock('PETRONET')"><strong>PETRONET</strong></td><td style="font-size:12px">Dahej expansion to 22.5 MMTPA approved; new Exxon/Equinor LNG contracts</td><td><span class="badge badge-b">Neutral</span></td><td>quality-screen</td></tr>
+      <tr><td>2026-07-07</td><td class="clickable" onclick="showStock('ZYDUSLIFE')"><strong>ZYDUSLIFE</strong></td><td style="font-size:12px">$166M Assertio acquisition; ₹1,100Cr buyback at ₹1,260/share; Synthon Ozanimod deal</td><td><span class="badge badge-sb">Positive</span></td><td>thesis-tracker</td></tr>
+      <tr><td>2026-07-06</td><td class="clickable" onclick="showStock('LUPIN')"><strong>LUPIN</strong></td><td style="font-size:12px">FDA approvals for Eribulin & Olaparib; FY26 PAT ₹5,355Cr (+62% YoY); ROE surged to 23.8%</td><td><span class="badge badge-sb">Positive</span></td><td>portfolio-review</td></tr>
+      <tr><td>2026-07-05</td><td class="clickable" onclick="showStock('CHENNPETRO')"><strong>CHENNPETRO</strong></td><td style="font-size:12px">85% 1-year price return; PE still only 5.5x; refining margin cycle strong</td><td><span class="badge badge-sb">Positive</span></td><td>quality-screen</td></tr>
+      <tr><td>2026-07-03</td><td class="clickable" onclick="showStock('BAJAJ_AUTO')"><strong>BAJAJ-AUTO</strong></td><td style="font-size:12px">Exports growth strong; Q1 results due Jul 21; 29% ROE leader in auto</td><td><span class="badge badge-b">Neutral</span></td><td>investment-research</td></tr>
+      <tr><td>2026-07-01</td><td class="clickable" onclick="showStock('EMMVEE')"><strong>EMMVEE</strong></td><td style="font-size:12px">Capacity expansion 7.8→16.3 GW; India solar boom tailwind; D/E 3.6x concern</td><td><span class="badge badge-h">Mixed</span></td><td>bottleneck-hunter</td></tr>
+    </tbody></table>
+  `;
+}
+
+// ============ QUALITY SCREEN ============
+function renderQualityScreen(){
+  const stocks = Object.keys(UNIVERSE).map(sym=>{
+    const u=UNIVERSE[sym];
+    const roeScore = u.roe>=25?20:u.roe>=18?15:u.roe>=12?10:5;
+    const deScore = u.de==null?15:u.de<=0.2?15:u.de<=0.5?10:5;
+    const divScore = u.div>=3?10:u.div>=1.5?7:u.div>=0.5?4:0;
+    const peScore = u.pe&&u.pe<=12?20:u.pe&&u.pe<=20?15:u.pe&&u.pe<=30?10:5;
+    const recScore = u.rec==='Strong Buy'?15:u.rec==='Buy'?10:u.rec==='Hold'?5:0;
+    const total = Math.min(roeScore+deScore+divScore+(peScore||0)+recScore,80);
+    return {...u,sym,score:total};
+  }).sort((a,b)=>b.score-a.score);
+
+  document.getElementById('tab-quality-screen').innerHTML = `
+    <div class="tab-title">Quality Screen — 7-Factor Analysis</div>
+    <div class="tab-desc">Run: quality-screen skill. ROE≥15, FCF+ve, D/E<0.5, Margin≥15%, OCF/NI>0.7, Net margin≥5%, Dilution<20%</div>
+    <div class="search-bar">
+      <input id="qSearch" placeholder="Search stocks..." oninput="filterTable('qSearch','qTable')">
+      <select id="qFilter" onchange="filterTable('qSearch','qTable')">
+        <option value="">All</option>
+        <option value="Strong Buy">Strong Buy</option>
+        <option value="Buy">Buy</option>
+        <option value="Hold">Hold</option>
+        <option value="Sell">Sell</option>
+      </select>
+    </div>
+    <table id="qTable"><thead><tr>
+      <th>#</th><th>Stock</th><th>PE</th><th>ROE</th><th>D/E</th><th>Div%</th><th>Mkt Cap</th><th>Score</th><th>Rec</th><th>Risk</th><th>Catalyst</th>
+    </tr></thead><tbody>
+      ${stocks.map((x,i)=>`<tr class="clickable" onclick="showStock('${x.sym}')">
+        <td class="num">${i+1}</td>
+        <td><strong>${x.disp||x.sym}</strong></td>
+        <td class="num">${x.pe?fmt(x.pe,1):'-'}</td>
+        <td class="num">${fmt(x.roe,1)}%</td>
+        <td class="num">${x.de!=null?fmt(x.de,2):'-'}</td>
+        <td class="num">${fmt(x.div,1)}%</td>
+        <td class="num">${fmt(x.mcap,0)}</td>
+        <td class="num"><strong>${x.score}</strong></td>
+        <td>${recBadge(x.rec)}</td>
+        <td style="max-width:130px;font-size:11px">${x.risk?x.risk.slice(0,2).join(', '):'-'}</td>
+        <td style="max-width:130px;font-size:11px">${x.cat?x.cat.slice(0,2).join(', '):'-'}</td>
+      </tr>`).join('')}
+    </tbody></table>
+  `;
+}
+
+// ============ BOTTLENECK HUNTER ============
+function renderBottleneck(){
+  document.getElementById('tab-bottleneck').innerHTML = `
+    <div class="tab-title">Bottleneck Hunter</div>
+    <div class="tab-desc">Supply chain bottleneck & arbitrage analysis — Run: bottleneck-hunter skill</div>
+    <table><thead><tr>
+      <th>Stock</th><th>Bottleneck</th><th>Layer</th><th>Pricing Power</th><th>Substitutability</th><th>Score</th><th>Rec</th>
+    </tr></thead><tbody>
+      <tr class="clickable" onclick="showStock('PETRONET')"><td><strong>PETRONET</strong></td><td style="font-size:12px">LNG regasification — only 2 major terminals on West coast</td><td>L1 Infra</td><td>High (take-or-pay)</td><td>Low</td><td class="num gain">92</td><td>Strong bottleneck moat</td></tr>
+      <tr class="clickable" onclick="showStock('BLS')"><td><strong>BLS</strong></td><td style="font-size:12px">Visa outsourcing — govt empanelment natural bottleneck</td><td>L0 Service</td><td>Medium</td><td>Medium</td><td class="num gain">78</td><td>Monitor renewals</td></tr>
+      <tr class="clickable" onclick="showStock('ITC')"><td><strong>ITC</strong></td><td style="font-size:12px">Cigarette distribution — 6M retail touchpoints (monopoly)</td><td>L0 Consumer</td><td>Very High</td><td>Very Low</td><td class="num gain">95</td><td>Classic bottleneck</td></tr>
+      <tr class="clickable" onclick="showStock('EMMVEE')"><td><strong>EMMVEE</strong></td><td style="font-size:12px">Solar glass — only Indian manufacturer of textured glass</td><td>L1 Mat'ls</td><td>High</td><td>Low</td><td class="num gain">85</td><td>Green energy bottleneck</td></tr>
+      <tr><td><strong>CHENNPETRO</strong></td><td style="font-size:12px">Refining — Cauvery basin feedstock advantage</td><td>L1 Energy</td><td>Medium</td><td>Medium</td><td class="num gain">71</td><td>Refining margin upside</td></tr>
+      <tr><td><strong>JSL</strong></td><td style="font-size:12px">Stainless steel — India's largest integrated player</td><td>L1 Mat'ls</td><td>Medium</td><td>Low</td><td class="num gain">73</td><td>India capex play</td></tr>
+      <tr><td><strong>KALYANKJIL</strong></td><td style="font-size:12px">Organised jewellery — unorganised → organised shift</td><td>L0 Retail</td><td>Medium</td><td>Medium</td><td class="num">62</td><td>Consolidation play</td></tr>
+      <tr><td><strong>IRFC</strong></td><td style="font-size:12px">Railway financing — captive to Indian Railways</td><td>L1 Fin</td><td>Low</td><td>Low</td><td class="num">55</td><td>Govt policy dependent</td></tr>
+    </tbody></table>
+
+    <div class="sub-section">
+      <div class="sub-title">Bottleneck Arbitrage Scorecard</div>
+      <table><thead><tr><th>Thesis</th><th>Type</th><th>Investability</th><th>Horizon</th><th>Status</th></tr></thead><tbody>
+        <tr><td>India LNG terminal monopoly (PETRONET)</td><td>Physical infra</td><td class="gain">High</td><td>Long-term</td><td><span class="badge badge-sb">Active</span></td></tr>
+        <tr><td>India solar glass sole player (EMMVEE)</td><td>Manufacturing</td><td class="gain">High</td><td>Medium-term</td><td><span class="badge badge-sb">Emerging</span></td></tr>
+        <tr><td>Visa outsourcing consolidation (BLS)</td><td>Regulatory</td><td>Medium</td><td>Long-term</td><td><span class="badge badge-h">Monitoring</span></td></tr>
+        <tr><td>India steel capacity (JSL, TATASTEEL)</td><td>Manufacturing</td><td>Medium</td><td>Cyclical</td><td><span class="badge badge-h">Cyclical</span></td></tr>
+        <tr><td>Organised jewellery shift (KALYANKJIL)</td><td>Consumer shift</td><td>Medium</td><td>Structural</td><td><span class="badge badge-h">Monitoring</span></td></tr>
+      </tbody></table>
+    </div>
+  `;
+}
+
+// ============ INVESTMENT CHECKLIST ============
+function renderChecklist(){
+  const stocks = ['BLS','GESHIP','ICICIBANK','INFY','ITC','M_M','PETRONET','LUPIN','HEROMOTOCO','NATCOPHARM','CHENNPETRO','EMMVEE'];
+  const items = ['Business Simplicity','Durable Moat','Management Quality','Financial Strength','Margin of Safety','Rational Pricing','Circle of Competence','Passes Headline Test'];
+  const data = {
+    BLS:['✓','●','✓','✓','✗','✓','✓','✓'],
+    GESHIP:['✓','●','✓','✓','✓','✓','●','✓'],
+    ICICIBANK:['✓','✓','✓','✓','✓','✓','✓','✓'],
+    INFY:['✓','✓','✓','✓','●','✓','✓','✓'],
+    ITC:['✓','✓','✓','✓','●','●','✓','●'],
+    M_M:['✓','✓','✓','✓','✓','●','✓','✓'],
+    PETRONET:['✓','✓','●','✓','●','✓','✓','✓'],
+    LUPIN:['✓','●','✓','✓','●','●','✓','✓'],
+    HEROMOTOCO:['✓','✓','✓','✓','●','●','✓','✓'],
+    NATCOPHARM:['✓','●','✓','✓','●','✓','✓','●'],
+    CHENNPETRO:['✓','●','✓','✓','✓','✓','✓','✓'],
+    EMMVEE:['✓','✓','●','✗','✓','✓','●','✓']
+  };
+
+  document.getElementById('tab-checklist').innerHTML = `
+    <div class="tab-title">Investment Checklist — Buffett Pre-Buy</div>
+    <div class="tab-desc">Run: investment-checklist skill. ✓=Pass ●=Watch ✗=Fail</div>
+    <table><thead><tr><th>Checklist Item</th>${stocks.map(s=>`<th>${s}</th>`).join('')}</tr></thead><tbody>
+      ${items.map((item,ri)=>`<tr><td style="font-weight:600">${item}</td>
+        ${stocks.map(s=>{
+          const v = data[s][ri];
+          return `<td class="center ${v==='✓'?'gain':v==='✗'?'loss':'hold'}">${v==='✓'?'✅':v==='✗'?'❌':'⚠️'}</td>`;
+        }).join('')}
+      </tr>`).join('')}
+    </tbody></table>
+
+    <div class="sub-section">
+      <div class="sub-title">Mirror Test (5-sentence thesis)</div>
+      <table><thead><tr><th>Stock</th><th>5-Sentence Thesis</th><th>Pass?</th></tr></thead><tbody>
+        <tr><td><strong>ICICIBANK</strong></td><td style="font-size:12px">Best-in-class private bank; retail franchise + tech; proven mgmt; trades at 19x PE with 17% ROE; NPA at decadal lows</td><td><span class="badge badge-sb">Pass</span></td></tr>
+        <tr><td><strong>PETRONET</strong></td><td style="font-size:12px">LNG terminal tollbooth; take-or-pay contracts; near-monopoly on West coast; 18% ROE + 3.6% yield; expansion upside</td><td><span class="badge badge-sb">Pass</span></td></tr>
+        <tr><td><strong>CHENNPETRO</strong></td><td style="font-size:12px">Refining at 5.5x PE; 32.7% ROE; nearly debt-free; GRM cycle favourable; deep value with 85% 1Y return momentum</td><td><span class="badge badge-sb">Pass</span></td></tr>
+        <tr><td><strong>ITC</strong></td><td style="font-size:12px">Cigarette monopoly with pricing power; FMCG turning profitable; hotel demerger unlocking value; GST headwind uncertain; hold for clarity</td><td><span class="badge badge-h">Watch</span></td></tr>
+        <tr><td><strong>EMMVEE</strong></td><td style="font-size:12px">Sole Indian solar textured glass maker; 44.7% ROE; capacity doubling; high debt 3.6x; solar boom tailwind but execution key</td><td><span class="badge badge-h">Watch</span></td></tr>
+      </tbody></table>
+    </div>
+  `;
+}
+
+// ============ INVESTMENT RESEARCH ============
+function renderResearch(){
+  document.getElementById('tab-research').innerHTML = `
+    <div class="tab-title">Investment Research — Four Masters Framework</div>
+    <div class="tab-desc">Run: investment-research skill. Info Level: A(rich) / B(moderate) / C(limited)</div>
+    <table><thead><tr>
+      <th>Stock</th><th>Info Level</th><th>Business Quality</th><th>Moat</th><th>Management</th><th>Valuation</th><th>Max Risk</th><th>Verdict</th>
+    </tr></thead><tbody>
+      <tr class="clickable" onclick="showStock('BLS')"><td><strong>BLS</strong></td><td>A</td><td>★★★☆☆</td><td>★★☆☆☆</td><td>★★★★☆</td><td>★★★☆☆</td><td>Contract renewal</td><td>Accumulate</td></tr>
+      <tr class="clickable" onclick="showStock('GESHIP')"><td><strong>GESHIP</strong></td><td>A</td><td>★★★☆☆</td><td>★★☆☆☆</td><td>★★★★☆</td><td>★★★★★</td><td>Shipping cycle</td><td>Accumulate</td></tr>
+      <tr class="clickable" onclick="showStock('ICICIBANK')"><td><strong>ICICIBANK</strong></td><td>A</td><td>★★★★★</td><td>★★★★☆</td><td>★★★★★</td><td>★★★★☆</td><td>NIM compression</td><td>Buy</td></tr>
+      <tr class="clickable" onclick="showStock('INFY')"><td><strong>INFY</strong></td><td>A</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★☆☆</td><td>IT spending cycle</td><td>Hold</td></tr>
+      <tr class="clickable" onclick="showStock('ITC')"><td><strong>ITC</strong></td><td>A</td><td>★★★★★</td><td>★★★★★</td><td>★★★☆☆</td><td>★★★★☆</td><td>GST regulation</td><td>Hold</td></tr>
+      <tr class="clickable" onclick="showStock('M_M')"><td><strong>M&M</strong></td><td>A</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★☆☆</td><td>EV transition</td><td>Buy</td></tr>
+      <tr class="clickable" onclick="showStock('PETRONET')"><td><strong>PETRONET</strong></td><td>A</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★☆☆</td><td>★★★★★</td><td>Gas price vol</td><td>Buy</td></tr>
+      <tr class="clickable" onclick="showStock('LUPIN')"><td><strong>LUPIN</strong></td><td>A</td><td>★★★☆☆</td><td>★★★☆☆</td><td>★★★☆☆</td><td>★★★★☆</td><td>FDA compliance</td><td>Buy</td></tr>
+      <tr><td><strong>CHENNPETRO</strong></td><td>B</td><td>★★★★☆</td><td>★★☆☆☆</td><td>★★★☆☆</td><td>★★★★★</td><td>GRM cycle</td><td>Strong Buy</td></tr>
+      <tr><td><strong>EMMVEE</strong></td><td>B</td><td>★★★★☆</td><td>★★★★☆</td><td>★★☆☆☆</td><td>★★★☆☆</td><td>High debt</td><td>Buy (spec)</td></tr>
+      <tr><td><strong>BAJAJ_AUTO</strong></td><td>A</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★☆☆</td><td>EV disruption</td><td>Buy</td></tr>
+      <tr><td><strong>KALYANKJIL</strong></td><td>B</td><td>★★★★☆</td><td>★★★☆☆</td><td>★★★☆☆</td><td>★★☆☆☆</td><td>Valuation 43x</td><td>Hold</td></tr>
+      <tr><td><strong>ICICIGI</strong></td><td>A</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★☆☆</td><td>Competition</td><td>Buy</td></tr>
+      <tr><td><strong>KARURVYSYA</strong></td><td>B</td><td>★★★☆☆</td><td>★★☆☆☆</td><td>★★★☆☆</td><td>★★★★★</td><td>Low promoter</td><td>Strong Buy</td></tr>
+    </tbody></table>
+  `;
+}
+
+// ============ BUY/SELL SUGGESTIONS ============
+function renderBuySell(){
+  const suggestions = [
+    {sym:'ICICIBANK',action:'Buy',qty:5,price:1435,reason:'Best banking franchise; Q1 beat; 19% loan growth; FV ₹1700'},
+    {sym:'PETRONET',action:'Buy',qty:20,price:274,reason:'Infra tollbooth; 3.6% yield; expansion upside; FV ₹335'},
+    {sym:'BLS',action:'Accumulate',qty:15,price:236,reason:'Govt contract wins; -39% 1Y = buying opportunity; FV ₹340'},
+    {sym:'GESHIP',action:'Accumulate',qty:4,price:1345,reason:'Bonus issue catalyst; low PE 7x; FV ₹1865'},
+    {sym:'M_M',action:'Accumulate',qty:2,price:3179,reason:'SUV leader; EV momentum; FV ₹4000'},
+    {sym:'LUPIN',action:'Buy',qty:3,price:2443,reason:'ROE turnaround 23.8%; pipeline approvals; FV ₹2483'},
+    {sym:'FEDERALBNK',action:'Buy',qty:15,price:349,reason:'Record PAT; strong NII growth; FV ₹360'},
+    {sym:'HEROMOTOCO',action:'Hold',qty:2,price:4884,reason:'Record earnings but EV disruption risk; FV ₹5849'},
+    {sym:'INFY',action:'Hold',qty:0,price:1096,reason:'Wait for Q1 results Jul 23; FV ₹1469'},
+    {sym:'ITC',action:'Hold',qty:0,price:281,reason:'GST headwind; wait for clarity on vol impact; FV ₹343'},
+    {sym:'NATCOPHARM',action:'Hold',qty:0,price:980,reason:'Revlimid LOE impact; Olaparib potential; FV ₹1021'},
+    {sym:'ZYDUSLIFE',action:'Hold',qty:0,price:1131,reason:'Buyback floor ₹1260; Assertio deal; FV ₹1190'},
+    {sym:'JYOTHYLAB',action:'Hold',qty:0,price:200,reason:'Henkel licence loss 7-8% rev impact; debt-free; FV ₹245'}
+  ];
+
+  document.getElementById('tab-buy-sell').innerHTML = `
+    <div class="tab-title">Buy / Sell Suggestions</div>
+    <div class="tab-desc">Actionable recommendations for existing holdings & positions</div>
+    <table><thead><tr>
+      <th>Stock</th><th>Action</th><th>Suggested Qty</th><th>LTP</th><th>Fair Value</th><th>Upside</th><th>Rationale</th>
+    </tr></thead><tbody>
+      ${suggestions.map(x=>{
+        const upside = x.price>0?((x.fv||x.price)/x.price-1)*100:0;
+        return `<tr class="clickable" onclick="showStock('${x.sym}')">
+          <td><strong>${x.sym}</strong></td>
+          <td>${recBadge(x.action)}</td>
+          <td class="num">${x.qty>0?'+':''}${x.qty}</td>
+          <td class="num">${fmt(x.price)}</td>
+          <td class="num">${fmt(x.fv||'?',0)}</td>
+          <td class="num ${upside>=0?'gain':'loss'}">${fmt(upside,1)}%</td>
+          <td style="font-size:12px;max-width:240px">${x.reason}</td>
+        </tr>`;
+      }).join('')}
+    </tbody></table>
+  `;
+}
+
+// ============ NEW BUY OPPORTUNITIES ============
+function renderOpportunities(){
+  const held = new Set(HOLDINGS.map(x=>x.sym));
+  const opps = Object.keys(UNIVERSE)
+    .filter(s=>!held.has(s))
+    .filter(s=>UNIVERSE[s].rec==='Strong Buy'||UNIVERSE[s].rec==='Buy')
+    .sort((a,b)=>((UNIVERSE[b].score||0)-(UNIVERSE[a].score||0)));
+
+  document.getElementById('tab-opportunities').innerHTML = `
+    <div class="tab-title">New Buy Opportunities</div>
+    <div class="tab-desc">High-conviction candidates not currently held — Sorted by quality score</div>
+    <table><thead><tr>
+      <th>#</th><th>Stock</th><th>PE</th><th>ROE</th><th>D/E</th><th>Div%</th><th>Mkt Cap</th><th>Score</th><th>Rec</th><th>Suggested Qty</th><th>Thesis</th>
+    </tr></thead><tbody>
+      ${opps.map((sym,i)=>{
+        const u=UNIVERSE[sym];
+        const suggestQty = sym==='CHENNPETRO'?10:sym==='EMMVEE'?25:sym==='KARURVYSYA'?30:sym==='KTKBANK'?40:sym==='BAJAJ_AUTO'?2:sym==='JSL'?15:sym==='JKTYRE'?25:sym==='ICICIGI'?8:sym==='TMB'?15:sym==='ZENSARTECH'?20:10;
+        return `<tr class="clickable" onclick="showStock('${sym}')">
+          <td class="num">${i+1}</td>
+          <td><strong>${u.disp||sym}</strong></td>
+          <td class="num">${u.pe?fmt(u.pe,1):'-'}</td>
+          <td class="num">${fmt(u.roe,1)}%</td>
+          <td class="num">${u.de!=null?fmt(u.de,2):'-'}</td>
+          <td class="num">${fmt(u.div,1)}%</td>
+          <td class="num">${fmt(u.mcap,0)}</td>
+          <td class="num"><strong>${u.score||'-'}</strong></td>
+          <td>${recBadge(u.rec)}</td>
+          <td class="num"><strong>${suggestQty}</strong></td>
+          <td style="font-size:12px;max-width:180px">${(u.cat||[]).slice(0,2).join('; ')}</td>
+        </tr>`;
+      }).join('')}
+    </tbody></table>
+  `;
+}
+
+// ============ FORECAST ============
+function renderForecast(){
+  document.getElementById('tab-forecast').innerHTML = `
+    <div class="tab-title">Forecast & Scenario Analysis</div>
+    <div class="tab-desc">12-month outlook based on three-scenario valuation models</div>
+    <table><thead><tr>
+      <th>Stock</th><th>LTP</th><th>Bull Case</th><th>Base Case</th><th>Bear Case</th><th>Prob. Weighted</th><th>Upside</th><th>Key Driver</th>
+    </tr></thead><tbody>
+      <tr class="clickable" onclick="showStock('BLS')"><td><strong>BLS</strong></td><td class="num">236</td><td class="num gain">420</td><td class="num">340</td><td class="num loss">220</td><td class="num">330</td><td class="num gain">+40%</td><td style="font-size:12px">Contract wins + AI visa processing</td></tr>
+      <tr class="clickable" onclick="showStock('GESHIP')"><td><strong>GESHIP</strong></td><td class="num">1345</td><td class="num gain">2200</td><td class="num">1902</td><td class="num loss">1200</td><td class="num">1830</td><td class="num gain">+36%</td><td style="font-size:12px">Shipping rates + bonus issue</td></tr>
+      <tr class="clickable" onclick="showStock('ICICIBANK')"><td><strong>ICICIBANK</strong></td><td class="num">1435</td><td class="num gain">1900</td><td class="num">1700</td><td class="num loss">1400</td><td class="num">1650</td><td class="num gain">+15%</td><td style="font-size:12px">NIM stability + loan growth</td></tr>
+      <tr class="clickable" onclick="showStock('INFY')"><td><strong>INFY</strong></td><td class="num">1096</td><td class="num gain">1500</td><td class="num">1326</td><td class="num loss">1000</td><td class="num">1275</td><td class="num gain">+16%</td><td style="font-size:12px">AI pipeline monetisation</td></tr>
+      <tr class="clickable" onclick="showStock('ITC')"><td><strong>ITC</strong></td><td class="num">281</td><td class="num gain">400</td><td class="num">343</td><td class="num loss">240</td><td class="num">330</td><td class="num gain">+17%</td><td style="font-size:12px">Hotel demerger + FMCG profit</td></tr>
+      <tr class="clickable" onclick="showStock('M_M')"><td><strong>M&M</strong></td><td class="num">3179</td><td class="num gain">4500</td><td class="num">4000</td><td class="num loss">3000</td><td class="num">4000</td><td class="num gain">+26%</td><td style="font-size:12px">SUV share + BEV 7e ramp</td></tr>
+      <tr class="clickable" onclick="showStock('PETRONET')"><td><strong>PETRONET</strong></td><td class="num">274</td><td class="num gain">370</td><td class="num">335</td><td class="num loss">260</td><td class="num">330</td><td class="num gain">+20%</td><td style="font-size:12px">Dahej expansion + new contracts</td></tr>
+      <tr class="clickable" onclick="showStock('LUPIN')"><td><strong>LUPIN</strong></td><td class="num">2443</td><td class="num gain">3200</td><td class="num">2483</td><td class="num loss">2000</td><td class="num">2500</td><td class="num gain">+2%</td><td style="font-size:12px">ROE recovery + pipeline</td></tr>
+      <tr><td><strong>CHENNPETRO</strong></td><td class="num">1128</td><td class="num gain">2500</td><td class="num">1921</td><td class="num loss">1000</td><td class="num">1800</td><td class="num gain">+60%</td><td style="font-size:12px">GRM cycle + deep value re-rating</td></tr>
+      <tr><td><strong>EMMVEE</strong></td><td class="num">334</td><td class="num gain">650</td><td class="num">480</td><td class="num loss">250</td><td class="num">460</td><td class="num gain">+38%</td><td style="font-size:12px">Solar capacity doubling</td></tr>
+      <tr><td><strong>BAJAJ_AUTO</strong></td><td class="num">10233</td><td class="num gain">13500</td><td class="num">10892</td><td class="num loss">8500</td><td class="num">10800</td><td class="num gain">+5%</td><td style="font-size:12px">Exports + Q1 results Jul 21</td></tr>
+      <tr><td><strong>KARURVYSYA</strong></td><td class="num">310</td><td class="num gain">420</td><td class="num">351</td><td class="num loss">260</td><td class="num">340</td><td class="num gain">+10%</td><td style="font-size:12px">47% profit CAGR; low PE 12x</td></tr>
+    </tbody></table>
+
+    <div class="sub-section">
+      <div class="sub-title">Macro Scenario Probabilities</div>
+      <table><thead><tr><th>Scenario</th><th>Probability</th><th>Market Impact</th><th>Portfolio Strategy</th></tr></thead><tbody>
+        <tr><td>Soft landing + rate cuts H2 2026</td><td class="num">45%</td><td class="gain">+8-12%</td><td>Full allocation; add cyclicals (M&M, JSL)</td></tr>
+        <tr><td>Stagflation (rates stay high)</td><td class="num">30%</td><td class="loss">-5-8%</td><td>Defensive tilt; add ITC, PETRONET, bonds</td></tr>
+        <tr><td>Sharp recession (global)</td><td class="num">15%</td><td class="loss">-15-20%</td><td>Hedge; increase cash; buy at panic levels</td></tr>
+        <tr><td>India-specific boom (reforms + capex)</td><td class="num">10%</td><td class="gain">+15-20%</td><td>Overweight banks, capital goods, infra</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Valuation Model — Three-Scenario (3yr forward)</div>
+      <table><thead><tr><th>Stock</th><th>Base EPS Gr</th><th>Base Target PE</th><th>Base 3yr Price</th><th>Base Return</th><th>Bear Return</th><th>Bull Return</th></tr></thead><tbody>
+        <tr><td><strong>BLS</strong></td><td>15%</td><td>18x</td><td>₹457</td><td class="gain">+94%</td><td class="loss">-2%</td><td class="gain">+246%</td></tr>
+        <tr><td><strong>PETRONET</strong></td><td>8%</td><td>11x</td><td>₹362</td><td class="gain">+32%</td><td class="loss">-19%</td><td class="gain">+87%</td></tr>
+        <tr><td><strong>GESHIP</strong></td><td>10%</td><td>10x</td><td>₹2556</td><td class="gain">+90%</td><td class="loss">0%</td><td class="gain">+200%</td></tr>
+      </tbody></table>
+    </div>
+  `;
+}
+
+// ============ ACTION PLAN ============
+function renderActionPlan(){
+  document.getElementById('tab-action-plan').innerHTML = `
+    <div class="tab-title">Prioritized Action Plan</div>
+    <div class="tab-desc">Ranked recommendations in order of importance — Data as of ${TODAY}</div>
+    <table><thead><tr>
+      <th>Priority</th><th>Action</th><th>Stock</th><th>Suggested Qty</th><th>Timeframe</th><th>Status</th><th>Notes</th>
+    </tr></thead><tbody>
+      <tr><td><span class="badge badge-p1">P1</span></td><td>Buy new position</td><td><strong>CHENNPETRO</strong></td><td class="num">10</td><td>This week</td><td><span class="badge badge-h">Pending</span></td><td style="font-size:12px">PE 5.5x; ROE 32.7%; deep value; FV ₹1921; debt-free</td></tr>
+      <tr><td><span class="badge badge-p1">P1</span></td><td>Buy new position</td><td><strong>EMMVEE</strong></td><td class="num">25</td><td>This week</td><td><span class="badge badge-h">Pending</span></td><td style="font-size:12px">44.7% ROE; solar glass monopoly; capacity doubling; D/E 3.6x risky</td></tr>
+      <tr><td><span class="badge badge-p1">P1</span></td><td>Accumulate</td><td><strong>BLS</strong></td><td class="num">+15</td><td>On dips <230</td><td><span class="badge badge-h">Waiting</span></td><td style="font-size:12px">Providing 44% upside to FV ₹340; ₹2KCr UIDAI contract win</td></tr>
+      <tr><td><span class="badge badge-p1">P1</span></td><td>Buy new position</td><td><strong>KARURVYSYA</strong></td><td class="num">30</td><td>This week</td><td><span class="badge badge-h">Pending</span></td><td style="font-size:12px">47% 5yr profit CAGR; PE 12x; ROE 18.7%; low promoter risk</td></tr>
+      <tr><td><span class="badge badge-p1">P1</span></td><td>Buy new position</td><td><strong>BAJAJ-AUTO</strong></td><td class="num">2</td><td>This week</td><td><span class="badge badge-h">Pending</span></td><td style="font-size:12px">29% ROE; exports growth; Q1 results Jul 21 catalyst</td></tr>
+      <tr><td><span class="badge badge-b">P2</span></td><td>Add to position</td><td><strong>PETRONET</strong></td><td class="num">+20</td><td>1 month</td><td><span class="badge badge-h">Scheduled</span></td><td style="font-size:12px">Infra tollbooth; 3.6% yield; expansion upside; FV ₹335</td></tr>
+      <tr><td><span class="badge badge-b">P2</span></td><td>Add to position</td><td><strong>ICICIBANK</strong></td><td class="num">+5</td><td>1 month</td><td><span class="badge badge-h">Scheduled</span></td><td style="font-size:12px">Best banking franchise; Q1 beat; FV ₹1700</td></tr>
+      <tr><td><span class="badge badge-b">P2</span></td><td>Add to position</td><td><strong>GESHIP</strong></td><td class="num">+4</td><td>1 month</td><td><span class="badge badge-h">Waiting</span></td><td style="font-size:12px">Post-bonus price discovery; low PE 7x</td></tr>
+      <tr><td><span class="badge badge-b">P2</span></td><td>Add to position</td><td><strong>M&M</strong></td><td class="num">+2</td><td>1 month</td><td><span class="badge badge-h">Scheduled</span></td><td style="font-size:12px">SUV leader; BEV 7e strong; FV ₹4000</td></tr>
+      <tr><td><span class="badge badge-b">P2</span></td><td>Review thesis</td><td><strong>ITC</strong></td><td class="num">—</td><td>2 weeks</td><td><span class="badge badge-h">Scheduled</span></td><td style="font-size:12px">GST 28%→40% impact; wait for Q1 vol data</td></tr>
+      <tr><td><span class="badge badge-h">P3</span></td><td>Buy new (small)</td><td><strong>KTKBANK</strong></td><td class="num">40</td><td>1 month</td><td><span class="badge badge-h">Queued</span></td><td style="font-size:12px">PE 8x; improving asset quality; deep value</td></tr>
+      <tr><td><span class="badge badge-h">P3</span></td><td>Buy new (small)</td><td><strong>JKTYRE</strong></td><td class="num">25</td><td>1 month</td><td><span class="badge badge-h">Queued</span></td><td style="font-size:12px">PE 13.3x; radialization demand; FV ₹543</td></tr>
+      <tr><td><span class="badge badge-h">P3</span></td><td>Buy new (small)</td><td><strong>JSL</strong></td><td class="num">15</td><td>2 months</td><td><span class="badge badge-h">Queued</span></td><td style="font-size:12px">Stainless steel leader; EPS +42%; India capex</td></tr>
+      <tr><td><span class="badge badge-h">P3</span></td><td>Buy new (small)</td><td><strong>ICICIGI</strong></td><td class="num">8</td><td>1 month</td><td><span class="badge badge-h">Queued</span></td><td style="font-size:12px">Insurance penetration; FV ₹2108; PE 33x</td></tr>
+      <tr><td><span class="badge badge-h">P3</span></td><td>Update thesis</td><td><strong>NATCOPHARM</strong></td><td class="num">—</td><td>2 weeks</td><td><span class="badge badge-h">Scheduled</span></td><td style="font-size:12px">Olaparib approval; reassess after Revlimid LOE</td></tr>
+      <tr><td><span class="badge badge-h">P3</span></td><td>Monitor for entry</td><td><strong>LUPIN</strong></td><td class="num">+3</td><td>2 months</td><td><span class="badge badge-h">Queued</span></td><td style="font-size:12px">ROE turnaround; wait for better entry</td></tr>
+    </tbody></table>
+  `;
+}
+
+// ============ MODAL ============
+const allDeeps = {
+  BLS:{bus:'Visa & passport outsourcing to 30+ governments. Revenue from service contracts with embassies.',moat:'Government empanelment + scale advantage. Narrow but real.',mgmt:'Promoter-led, strong execution, consistent dividend payer.',fin:'Net cash; negative working capital; 32.7% ROE; FCF yield 7.7%',risk:'Govt contract renewal risk; single-bid tender risk; visa policy changes',cat:'UIDAI ₹2KCr Aadhaar contract; Sypha AI visa processing',dyp:'Simple business, predictable renewal revenue; likes scalability',buffet:'Service franchise with long-term govt contracts; good but narrow',munger:'Easy to understand; watch single-bid renewal risk',lilu:'Govt contract renewals key; not a wide moat but real value',score:82,pe:14.1,roe:32.7,mcap:9700},
+  GESHIP:{bus:'International crude/products tanker shipping. 41 vessels.',moat:'India\'s largest private fleet; long-term customer relationships',mgmt:'Conservative balance sheet mgmt; 17th consecutive dividend',fin:'D/E 0.06; PAT ₹2,943Cr FY26; EBITDA margin 62.3%',risk:'Shipping cycle downturn; fuel cost volatility; geopolitics',cat:'Fleet expansion; Strait disruption booster; bonus issue 2:1',dyp:'Well-run commodity business; likes management quality',buffet:'Cyclical; attractive at P/E 7x; buy when distressed',munger:'Tough industry but low-debt approach aligns',lilu:'Good capital allocator; likes owner-operator mindset',score:78,pe:7.0,roe:18.8,mcap:20600},
+  PETRONET:{bus:'LNG regasification & gas distribution. Dahej & Kochi terminals.',moat:'Near-monopoly LNG terminal infra on West coast; take-or-pay contracts',mgmt:'Stable PSU mgmt; consistent operations; high dividend yield',fin:'16.2% ROE; D/E 0.11; predictable take-or-pay cash flows',risk:'Gas price volatility; take-or-pay risk if demand falls',cat:'Dahej expansion to 22.5mmtpa; Exxon/Equinor LNG contracts',dyp:'Stable utility-like business; likes predictability',buffet:'Infrastructure toll bridge — exactly what he likes',munger:'Take-or-pay contracts are a real moat',lilu:'Steady cash generator for portfolio ballast',score:75,pe:10.5,roe:18.6,mcap:41873},
+  ICICIBANK:{bus:'2nd largest private bank in India. Universal banking.',moat:'Strong retail franchise; tech-first; 40M+ customers; 19% loan growth',mgmt:'Sandeep Bakhshi-led turnaround; strong risk culture; NPAs at decadal low',fin:'Q1 PAT ₹14,805Cr (+15.9%); NIM 4.36%; GNPA 1.38% improving',risk:'NIM compression from rate cuts; global slowdown impact',cat:'Q1 beat; loan growth 19.6%; digital banking leadership',dyp:'Likes the brand and management quality; simple banking model',buffet:'Moat is wide in Indian banking context',munger:'Avoids banks but acknowledges ICICI\'s tech advantage',lilu:'Owns as India formalisation proxy; risk management overhaul',score:85,pe:19.0,roe:17.2,mcap:1030000},
+  INFY:{bus:'Global IT services, consulting & digital solutions',moat:'Top-3 Indian IT brand; $3B+ GenAI pipeline; strong client relationships',mgmt:'Salil Parekh-led; consistent margin delivery; capital return policy',fin:'31.9% ROE; net cash; 4.6% dividend yield; record TCV $14.9B',risk:'US recession; IT spending cuts; visa policy',cat:'Topaz AI platform; Q1 results Jul 23; $200M EU deal',dyp:'A "done right" business; culture matters',buffet:'Capital-light model with switching costs',munger:'Likes "say what you do, do what you say" culture',lilu:'Predictable earnings with capital return',score:74,pe:14.8,roe:31.9,mcap:445000},
+  ITC:{bus:'Diversified conglomerate: cigarettes, FMCG, hotels, paper, agri',moat:'80%+ cig mkt share; 6M retail outlet distribution; pricing power',mgmt:'Sanjiv Puri driving FMCG & hotels transformation; zero debt',fin:'29.3% ROE; zero debt; 5.2% div yield; FMCG profit +51%',risk:'GST hike 28%→40% of RSP; cig vol decline -10 to -15% in FY27',cat:'Hotel demerger NCLT approved; FMCG profitability improving',dyp:'FMCG transformation story; tax risk is real',buffet:'Wonderful cig business with huge moat but sin-sector stigma',munger:'Pricing power great; regulatory risk ever-present',lilu:'Value + compounding; hotel demerger unlocking value',score:68,pe:16.8,roe:29.3,mcap:350000},
+  M_M:{bus:'Auto & farm equipment; SUVs and tractors',moat:'#1 SUV maker India (27.3% share); #1 tractor 40+ years',mgmt:'Anish Shah-led; clear EV roadmap; low D/E 0.06',fin:'20.8% ROE; Q1 PAT ₹4,083Cr (+24%); SUV + tractor recovery',risk:'Auto cycle downturn; EV transition costs',cat:'BEV 7e 30K bookings; price hike 2.7%; SUV share expanding',dyp:'Likes its authenticity and long-term thinking',buffet:'Strong brand; tractor franchise has near-permanent moat',munger:'Tractor is a classic moat; SUV leadership durable',lilu:'Long-term India formalisation compounding story',score:81,pe:24.8,roe:20.8,mcap:395343},
+  CHENNPETRO:{bus:'Refining; Cauvery basin feedstock advantage',moat:'Regional refining position; virtually debt-free; strong GRM history',mgmt:'Professional management; disciplined capital allocation',fin:'32.7% ROE; PE 5.5x; debt-free; strong FCF in upcycles',risk:'GRM cyclicality; crude oil volatility; govt APM policy',cat:'85% 1Y return still cheap; refining margin cycle strong',dyp:'Unknown to him but simple cyclical model fits his criteria',buffet:'Buy when distressed; current PE 5.5x is attractive',munger:'Would appreciate debt-free balance sheet discipline',lilu:'Cyclical value; requires timing conviction',score:88,pe:5.5,roe:32.7,mcap:16802},
+  EMMVEE:{bus:'Solar photovoltaic glass manufacturer; sole Indian producer of textured glass',moat:'Near-monopoly in Indian solar glass; capacity 7.8GW to 16.3GW',mgmt:'Promoter-led; aggressive expansion capex',fin:'44.7% ROE; but D/E 3.6x (high debt); revenue growth 41% est',risk:'High debt 3.6x; China import dependency; customer concentration',cat:'India solar boom; ALMM mandate; capacity expansion doubling',dyp:'Capital-intensive but sole player in growing market',buffet:'Capital-intensive; needs to watch debt levels',munger:'Would flag the high debt as a risk factor',lilu:'Promising niche but balance sheet needs monitoring',score:65,pe:20.0,roe:44.7,mcap:23484}
+};
+
+function showStock(sym){
+  const h = HOLDINGS.find(x=>x.sym===sym);
+  const u = UNIVERSE[sym]||{};
+  const d = allDeeps[sym];
+  const p = POSITIONS.find(x=>x.sym===sym);
+
+  const price = h?h.ltp:(p?p.ltp:(u.pe?0:0));
+  const change = h?pnlPct(h.ltp,h.avgCost):0;
+
+  const tabs = [
+    {id:'overview',label:'Overview'},
+    {id:'masters',label:'Four Masters'},
+    {id:'financials',label:'Financials'},
+    {id:'risk',label:'Risk & Catalysts'},
+    {id:'skills',label:'Skill Reports'}
+  ];
+
+  let html = `<button class="modal-close" onclick="closeModal()">×</button>
+    <h2>${sym} <span class="ticker">${u.disp||''}</span></h2>
+    <div class="price-large">₹${fmt(price)} <span class="price-change ${change>=0?'gain':'loss'}">${h?((change>=0?'+':'')+fmt(change,1)+'%'):''}</span></div>
+
+    <div class="modal-tabs">`;
+  tabs.forEach((t,i)=>{
+    html += `<div class="modal-tab ${i===0?'active':''}" onclick="switchModalTab(this,'${t.id}','${sym}')">${t.label}</div>`;
+  });
+  html += `</div>`;
+
+  // TAB 1: Overview
+  html += `<div id="mt-overview-${sym}" class="modal-section active">
+    <div class="modal-grid">`;
+
+  if(h){
+    const pl = pnl(h.ltp,h.avgCost,h.qty);
+    html += `<div class="modal-box"><h4>Holdings</h4>
+      <div class="row"><span>Qty</span><span class="val">${h.qty}</span></div>
+      <div class="row"><span>Avg Cost</span><span class="val">₹${fmt(h.avgCost)}</span></div>
+      <div class="row"><span>LTP</span><span class="val">₹${fmt(h.ltp)}</span></div>
+      <div class="row"><span>P&L</span><span class="val ${pl>=0?'gain':'loss'}">${pl>=0?'+':''}₹${fmt(pl,0)} (${fmt(pnlPct(h.ltp,h.avgCost),1)}%)</span></div>
+      <div class="row"><span>Invested</span><span class="val">₹${fmt(h.qty*h.avgCost,0)}</span></div>
+      <div class="row"><span>Current</span><span class="val">₹${fmt(h.qty*h.ltp,0)}</span></div>
+    </div>`;
+  }
+
+  if(u.pe){
+    html += `<div class="modal-box"><h4>Financial Metrics</h4>
+      <div class="row"><span>P/E</span><span class="val">${fmt(u.pe,1)}x</span></div>
+      <div class="row"><span>P/B</span><span class="val">${fmt(u.pb,2)}x</span></div>
+      <div class="row"><span>ROE</span><span class="val">${fmt(u.roe,1)}%</span></div>
+      <div class="row"><span>D/E</span><span class="val">${u.de!=null?fmt(u.de,2):'-'}</span></div>
+      <div class="row"><span>Dividend</span><span class="val">${fmt(u.div,1)}%</span></div>
+      <div class="row"><span>Mkt Cap</span><span class="val">₹${fmt(u.mcap,0)}Cr</span></div>
+      <div class="row"><span>Score</span><span class="val"><strong>${u.score||'-'}</strong></span></div>
+      <div class="row"><span>Rec</span><span class="val">${recBadge(u.rec)}</span></div>
+    </div>`;
+  }
+
+  if(d){
+    html += `<div class="modal-box"><h4>Business Model</h4>
+      <div class="row"><span style="font-size:12px">${d.bus||'N/A'}</span></div>
+      <div style="margin-top:8px"><h4>Moat Assessment</h4>
+      <span style="font-size:12px">${d.moat||'N/A'}</span></div>
+    </div>`;
+    html += `<div class="modal-box"><h4>Management & Financial</h4>
+      <div class="row"><span style="font-size:12px"><strong>Mgmt:</strong> ${d.mgmt||'N/A'}</span></div>
+      <div class="row" style="margin-top:6px"><span style="font-size:12px"><strong>Financial:</strong> ${d.fin||'N/A'}</span></div>
+    </div>`;
+  }
+
+  if(u.fv){
+    const upside = price>0?((parseFloat(u.fv)/price-1)*100):0;
+    html += `<div class="modal-box"><h4>Valuation</h4>
+      <div class="row"><span>Fair Value</span><span class="val gain">₹${fmt(u.fv,0)}</span></div>
+      <div class="row"><span>Upside</span><span class="val gain">+${fmt(upside,1)}%</span></div>
+    </div>`;
+  }
+
+  html += `</div></div>`;
+
+  // TAB 2: Four Masters
+  html += `<div id="mt-masters-${sym}" class="modal-section">`;
+  if(d){
+    html += `<div class="deep-grid">
+      <div class="deep-item"><div class="author">Duan Yongping</div><p>${d.dyp||'N/A'}</p></div>
+      <div class="deep-item"><div class="author">Warren Buffett</div><p>${d.buffet||'N/A'}</p></div>
+      <div class="deep-item"><div class="author">Charlie Munger</div><p>${d.munger||'N/A'}</p></div>
+      <div class="deep-item"><div class="author">Li Lu</div><p>${d.lilu||'N/A'}</p></div>
+    </div>`;
+  } else {
+    html += `<div class="modal-box modal-full" style="text-align:center;padding:20px;color:var(--text2)">
+      <div style="font-size:24px;margin-bottom:8px">📋</div>
+      <p>Four Masters analysis not yet generated for ${sym}.<br>Run <strong>/investment-team</strong> or <strong>/investment-research</strong> to populate.</p>
+      <p style="margin-top:8px;font-size:12px">Available financial data: PE ${u.pe||'?'}x | ROE ${u.roe||'?'}% | Score ${u.score||'?'}</p>
+    </div>`;
+  }
+  html += `</div>`;
+
+  // TAB 3: Financials
+  html += `<div id="mt-financials-${sym}" class="modal-section">`;
+  if(u.pe||u.roe){
+    html += `<div class="modal-grid">
+      <div class="modal-box modal-full"><h4>Quality Screen (7-Factor)</h4>
+      <table style="box-shadow:none;margin:0"><thead><tr><th>Factor</th><th>Value</th><th>Score</th></tr></thead><tbody>
+        <tr><td>ROE</td><td>${fmt(u.roe,1)}%</td><td>${u.roe>=25?'✅ Excellent':u.roe>=15?'✅ Good':u.roe>=10?'⚠️ Average':'❌ Poor'}</td></tr>
+        <tr><td>P/E</td><td>${fmt(u.pe,1)}x</td><td>${u.pe&&u.pe<=12?'✅ Cheap':u.pe&&u.pe<=20?'✅ Fair':u.pe&&u.pe<=30?'⚠️ Premium':'❌ Expensive'}</td></tr>
+        <tr><td>D/E</td><td>${fmt(u.de,2)}</td><td>${u.de!=null&&u.de<=0.2?'✅ Low':u.de!=null&&u.de<=0.5?'✅ Manageable':'⚠️ High'}</td></tr>
+        <tr><td>Dividend</td><td>${fmt(u.div,1)}%</td><td>${u.div>=3?'✅ High Yield':u.div>=1?'✅ Moderate':'--'}</td></tr>
+        <tr><td>Market Cap</td><td>₹${fmt(u.mcap,0)}Cr</td><td>${u.mcap>100000?'✅ Large Cap':u.mcap>10000?'✅ Mid Cap':'⚠️ Small Cap'}</td></tr>
+      </tbody></table>
+      </div>
+      <div class="modal-box"><h4>Bottleneck Hunter</h4>
+      <p style="font-size:12px">${d?`Moat: ${d.moat}`:'Not analyzed'}</p>
+      <p style="font-size:12px;margin-top:4px">Score: <strong>${u.score||'?'}</strong></p>
+      </div>
+      <div class="modal-box"><h4>Forecast Summary</h4>
+      <p style="font-size:12px">${d?'Bull '+d.bull+', Base '+d.base+', Bear '+d.bear:'Run forecast model to see projections'}</p>
+      </div>
+    </div>`;
+  }
+  if(!u.pe&&!u.roe){
+    html += `<div class="modal-box modal-full" style="text-align:center;padding:20px;color:var(--text2)">
+      <p>${sym} is a bond instrument. No equity financial metrics to display.</p>
+      <p style="font-size:12px;margin-top:4px">Bond Value: ₹${fmt(h?h.qty*h.ltp:'',0)}</p>
+    </div>`;
+  }
+  html += `</div>`;
+
+  // TAB 4: Risk & Catalysts
+  html += `<div id="mt-risk-${sym}" class="modal-section">
+    <div class="modal-grid">
+      <div class="modal-box"><h4>Risks</h4>
+        ${u.risk?u.risk.map(r=>`<span class="chip chip-risk">${r}</span>`).join(' '):'<span style="font-size:12px;color:var(--text2)">Not identified</span>'}
+      </div>
+      <div class="modal-box"><h4>Catalysts</h4>
+        ${u.cat?u.cat.map(c=>`<span class="chip chip-cat">${c}</span>`).join(' '):'<span style="font-size:12px;color:var(--text2)">Not identified</span>'}
+      </div>
+    </div>
+  </div>`;
+
+  // TAB 5: Skill Reports
+  html += `<div id="mt-skills-${sym}" class="modal-section">
+    <div class="modal-grid">
+      <div class="modal-box"><h4>Portfolio Review</h4>
+        ${h?`<div class="row"><span>Qty</span><span class="val">${h.qty}</span></div>
+        <div class="row"><span>Avg Cost</span><span class="val">₹${fmt(h.avgCost)}</span></div>
+        <div class="row"><span>P&L</span><span class="val ${pnl(h.ltp,h.avgCost,h.qty)>=0?'gain':'loss'}">${fmt(pnl(h.ltp,h.avgCost,h.qty),0)}</span></div>
+        <div class="row"><span>Weight</span><span class="val">${fmt(pnl(h.ltp,h.avgCost,h.qty)>0?h.qty*h.ltp:0,0)}</span></div>`:
+        `<span style="font-size:12px;color:var(--text2)">Not in portfolio</span>`}
+      </div>
+      <div class="modal-box"><h4>Thesis Tracker</h4>
+        ${d?`<span class="badge ${d.thesisStatus==='Active'?'badge-sb':d.thesisStatus==='Watch'?'badge-h':'badge-s'}">${d.thesisStatus||'N/A'}</span>
+        <div style="margin-top:6px"><span style="font-size:12px">Moat: ${d.moatAssessment||'N/A'}</span></div>`:
+        `<span style="font-size:12px;color:var(--text2)">No thesis tracked</span>`}
+      </div>
+      <div class="modal-box"><h4>Thesis Drift</h4>
+        <span style="font-size:12px">${d?`Status: ${d.thesisStatus||'Unknown'}`:'Baseline not established'}</span>
+        <div style="margin-top:4px"><span style="font-size:12px;color:var(--text2)">Compare with original thesis via /thesis-drift</span></div>
+      </div>
+      <div class="modal-box"><h4>News Pulse</h4>
+        <span style="font-size:12px">${d?d.news||'No recent news':'No news tracked'}</span>
+      </div>
+      <div class="modal-box"><h4>Quality Screen</h4>
+        <span style="font-size:12px">Score: <strong>${u.score||'-'}/80</strong> | Recommendation: ${recBadge(u.rec)}</span>
+        <div style="margin-top:4px"><span style="font-size:12px;color:var(--text2)">ROE: ${fmt(u.roe,1)}% | PE: ${u.pe?fmt(u.pe,1)+'x':'-'}</span></div>
+      </div>
+      <div class="modal-box"><h4>Bottleneck Hunter</h4>
+        <span style="font-size:12px">${d?d.moat:'Supply chain position not analyzed'}</span>
+      </div>
+      <div class="modal-box"><h4>Investment Checklist</h4>
+        <span style="font-size:12px">${d?`Passes: ${d.checklist||'Checklist not run'}`:'Run /investment-checklist to evaluate'}</span>
+      </div>
+      <div class="modal-box"><h4>Investment Research</h4>
+        <span style="font-size:12px">${u.infoLvl?`Info level: ${u.infoLvl} — ${u.infoLvl==='A'?'Rich data, well covered':u.infoLvl==='B'?'Moderate data, some estimation':'Limited data, high uncertainty'}`:'Not yet researched'}</span>
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function switchModalTab(el, tabId, sym){
+  document.querySelectorAll('#modalContent .modal-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#modalContent .modal-section').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(`mt-${tabId}-${sym}`).classList.add('active');
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+document.getElementById('modalOverlay').addEventListener('click',function(e){
+  if(e.target===this) closeModal();
+});
+
+// ============ NAVIGATION ============
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelector(`.nav-item[data-tab="${id}"]`).classList.add('active');
+  const item = NAV_ITEMS.find(x=>x.id===id);
+  document.getElementById('pageTitle').textContent = item ? item.label : id;
+  if(window.innerWidth<=768) document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleTheme(){
+  const d = document.documentElement.getAttribute('data-theme');
+  const next = d==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  document.getElementById('themeLabel').textContent = next==='dark'?'Dark':'Light';
+  localStorage.setItem('theme',next);
+}
+
+function filterTable(inputId,tableId){
+  const q = document.getElementById(inputId).value.toLowerCase();
+  const sel = document.getElementById(inputId.replace('Search','Filter'));
+  const filterVal = sel?sel.value:'';
+  const rows = document.getElementById(tableId).querySelectorAll('tbody tr');
+  rows.forEach(r=>{
+    const txt = r.textContent.toLowerCase();
+    const match = txt.includes(q);
+    const recMatch = !filterVal || txt.includes(filterVal.toLowerCase());
+    r.style.display = match&&recMatch?'':'none';
+  });
+}
+
+// ============ INIT ============
+function init(){
+  const nav = document.getElementById('navList');
+  NAV_ITEMS.forEach((x,i)=>{
+    const li = document.createElement('li');
+    li.className = 'nav-item'+(i===0?' active':'');
+    li.setAttribute('data-tab',x.id);
+    li.innerHTML = `<span class="ico">${x.ico}</span> ${x.label}`;
+    li.addEventListener('click',()=>switchTab(x.id));
+    nav.appendChild(li);
+  });
+
+  const saved = localStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);document.getElementById('themeLabel').textContent=saved==='dark'?'Dark':'Light';}
+
+  document.getElementById('themeToggle').addEventListener('click',toggleTheme);
+  document.getElementById('menuToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+
+  renderPortfolio();
+  renderThesisTracker();
+  renderThesisDrift();
+  renderNewsPulse();
+  renderQualityScreen();
+  renderBottleneck();
+  renderChecklist();
+  renderResearch();
+  renderBuySell();
+  renderOpportunities();
+  renderForecast();
+  renderActionPlan();
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
