@@ -142,7 +142,7 @@ reports/{company}/
 
 ## Dashboard UI Template
 
-The canonical sample dashboard format is `html/sample.html`: sidebar navigation, tab-based content sections for each analysis skill, stock click-to-modal showing consolidated cross-skill data. Use this as the template for all future dashboard work.
+The canonical sample layout dashboard format is `html/sample.html`: sidebar navigation, tab-based content sections for each analysis skill, stock click-to-modal showing consolidated cross-skill data. Use this as the template for all future dashboard work.
 
 ## Common Commands
 
