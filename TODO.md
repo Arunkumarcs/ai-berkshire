@@ -1,3 +1,4 @@
+Using UI design from html/sample.html but not data from it.
 Run the following investment analysis skills.
 
 Inputs
@@ -42,3 +43,4 @@ Requirements
 5. End the report with a "Prioritized Action Plan", listing recommendations in order of importance.
 6. Use a "sidebar-based UI", with all report tabs accessible from the left sidebar.
 7. When a stock is clicked from any tab, open a popup/modal that consolidates all analysis for that stock across every tab in a single view.
+8. In all table add sorting in heading but heading should not sort.
