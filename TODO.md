@@ -6,12 +6,11 @@ Inputs
 - Positions: /Users/dev/Downloads/positions.csv
 
 Universe (analyze even if not currently held)
-KPIL,M&M,ATUL,BLS,GESHIP,JKTYRE,JSL,APTUS,JSWDULUX,CHENNPETRO,JSWSTEEL,HEROMOTOCO,BPCL,HINDPETRO,ECLERX,PARADEEP,LUPIN,ITC,IDFCFIRSTB,MANAPPURAM,KTKBANK,SOUTHBANK,NATCOPHARM,TMPV,TMCV,DRREDDY,INFY,ZYDUSLIFE,ARE&M,EXIDEIND,TATACHEM,STOVEKRAFT,ICICIBANK,CIPLA,M&M,BAJAJ-AUTO,BIOCON,KALYANKJIL,TECHM,PETRONET,TMB,IRFC,INDUSINDBK,CUPID,ICICIGI,FEDERALBNK,KARURVYSYA,TATASTEEL,JYOTHYLAB,INDHOTEL,ZENSARTECH,
-WIPRO,CEATLTD,EMMVEE
+KPIL,M&M,ATUL,BLS,GESHIP,JKTYRE,JSL,APTUS,JSWDULUX,CHENNPETRO,JSWSTEEL,HEROMOTOCO,BPCL,HINDPETRO,ECLERX,PARADEEP,LUPIN,ITC,IDFCFIRSTB,MANAPPURAM,KTKBANK,SOUTHBANK,NATCOPHARM,TMPV,TMCV,DRREDDY,INFY,ZYDUSLIFE,ARE&M,EXIDEIND,TATACHEM,STOVEKRAFT,ICICIBANK,CIPLA,M&M,BAJAJ-AUTO,BIOCON,KALYANKJIL,TECHM,PETRONET,TMB,IRFC,INDUSINDBK,CUPID,ICICIGI,FEDERALBNK,KARURVYSYA,TATASTEEL,JYOTHYLAB,INDHOTEL,ZENSARTECH,WIPRO,CEATLTD,EMMVEE
 
 Tasks
 
-Run all of the following skills for above:
+Run all of the following skills for above use parallel agents if needed:
 
 - /portfolio-review
 - /thesis-tracker
@@ -43,5 +42,5 @@ Requirements
 5. End the report with a "Prioritized Action Plan", listing recommendations in order of importance.
 6. Use a "sidebar-based UI", with all report tabs accessible from the left sidebar.
 7. When a stock is clicked from any tab, open a popup/modal that consolidates all analysis for that stock across every tab in a single view.
-8. In all table add sorting in heading but heading should not sort.
+8. * In all table add sorting in heading but heading should not sort.
 9. write html/dashboard.html it via bash.
