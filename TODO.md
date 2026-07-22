@@ -44,3 +44,4 @@ Requirements
 6. Use a "sidebar-based UI", with all report tabs accessible from the left sidebar.
 7. When a stock is clicked from any tab, open a popup/modal that consolidates all analysis for that stock across every tab in a single view.
 8. In all table add sorting in heading but heading should not sort.
+9. write html/dashboard.html it via bash.
