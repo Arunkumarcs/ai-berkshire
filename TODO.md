@@ -10,7 +10,7 @@ KPIL,M&M,ATUL,BLS,GESHIP,JKTYRE,JSL,APTUS,JSWDULUX,CHENNPETRO,JSWSTEEL,HEROMOTOC
 
 Tasks
 
-Run all of the following skills for above:
+top priority run all of the following skills for above:
 
 - /portfolio-review
 - /thesis-tracker
