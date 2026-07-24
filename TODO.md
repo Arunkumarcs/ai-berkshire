@@ -34,7 +34,7 @@ note: In all table add sorting in heading but heading should not sort.
 1. Create a separate tab for each analysis skill/report, clearly showing the skill used.
    - Run deep analysis: web search + financial tools for holdings
    - Run deep analysis for non-held stocks in universe
-2. Add Valuation & Risk Tab
+2. Add Valuation & Risk Tab & Bonds
 3. Add a "Buy / Sell Suggestions" tab for existing holdings and positions, including:
    - Recommended action (Buy / Hold / Sell)
    - Suggested quantity to buy or sell
