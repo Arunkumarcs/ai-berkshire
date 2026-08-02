@@ -143,6 +143,7 @@ reports/{company}/
 ## Dashboard UI Template
 
 The canonical sample layout dashboard format is `html/sample.html`: sidebar navigation, tab-based content sections for each analysis skill, stock click-to-modal showing consolidated cross-skill data. Use this as the template for all future dashboard work don't use the data in this.
+- Every dashboard table must be sortable: include `makeSortable()` verbatim from sample.html AND call it at the end of `init()`. Never drop the wiring. Verify with `node scripts/check-dashboard-sort.mjs`.
 
 ## Common Commands
 
