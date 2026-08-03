@@ -50,3 +50,4 @@ note: In all table add sorting in heading but heading should not sort.
 10. When a stock is clicked from any tab, open a popup/modal that consolidates all analysis for that stock across every tab in a single view.
 11. for non-held universe stocks check balance sheet.
 12. Fetch updated news from web.
+13. Sector Leaders — Top 2 per Sector
