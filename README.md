@@ -14,7 +14,15 @@
 
 > 📮 **仓库是全量框架，公众号是精选。** 真正值得深研的公司，加上报告之外我自己的判断与取舍，都在微信公众号「**复利炼丹炉**」——[扫码关注 ↓](#精选研究首发于公众号)
 
-[实盘业绩](#real-track-record) · [为什么不能直接问AI](#为什么不能直接问-ai) · [Skills 一览](#skills-一览20个) · [快速开始](#快速开始) · [实战报告](#实战研究报告) · [设计理念](#设计理念) · [公众号](#精选研究首发于公众号)
+<!-- REPORTS-BANNER:START 由 tools/reports_index.py 自动更新，勿手改 -->
+
+> 📖 **想读报告，用 [阅读站](https://xbtlin.github.io/ai-berkshire/)**：成品报告按公司、专题、时间整理，电脑和手机都好读，可搜索、记住阅读进度。
+>
+> 📊 全部 2274 份报告（含底稿）· 111 家公司 · 29 个专题，GitHub 上的完整目录见 [研究报告索引](reports/README.md)，更新至 2026-10-28。
+
+<!-- REPORTS-BANNER:END -->
+
+[📖 阅读站](https://xbtlin.github.io/ai-berkshire/) · [实盘业绩](#real-track-record) · [为什么不能直接问AI](#为什么不能直接问-ai) · [Skills 一览](#skills-一览22个) · [快速开始](#快速开始) · [实战报告](#实战研究报告) · [研究索引](reports/README.md) · [设计理念](#设计理念) · [公众号](#精选研究首发于公众号)
 
 ---
 
@@ -55,6 +63,10 @@
 <img src="assets/wechat-qr.png" width="160" alt="微信公众号：复利炼丹炉" />
 
 **复利炼丹炉** —— 用 AI 炼投研这颗丹。
+
+> ⚠️ **官方渠道只有三个**：本仓库、[阅读站](https://xbtlin.github.io/ai-berkshire/)、公众号「复利炼丹炉」。**不收费、不荐股、不带单、不建投资群，也不以任何形式收款**。ai-berkshire.com、aiberkshire.com 等域名由他人注册，与本项目无关；凡以 AI Berkshire 名义拉群、收费、推荐个股的都不是本人。
+
+已发表文章按公司归档在 [投资炼丹/](投资炼丹/README.md)，每篇附对应的研究原稿。
 
 ---
 
@@ -166,19 +178,20 @@ AI Berkshire 确保：**同样的输入 → 结构一致、深度一致的输出
 
 
 **三层设计哲学**：
-- **Skill 层**：把"你要做什么"抽象成 20 个明确入口——深度研究、财报分析、行业筛选、持仓管理、思维工具，按场景选用
+- **Skill 层**：把"你要做什么"抽象成 22 个明确入口——深度研究、财报分析、行业筛选、持仓管理、思维工具，按场景选用
 - **Agent 层**：团队型 skill（如 `/investment-team`、`/earnings-team`）由 Team Lead 并行调度 4 个大师视角 Agent——各自独立搜索、独立判断、互相挑战，最后综合研判；轻量 skill 不经过这一层，直连工具快进快出
 - **工具层**：精确计算、实时检索、报告抽检——保证每份报告的数据严谨性可验证
 
 ---
 
-## Skills 一览（20个）
+## Skills 一览（22个）
 
 ### 🔬 深度研究类
 
 | Skill | 用途 | 适合场景 |
 |-------|------|---------|
 | [`/investment-research`](skills/investment-research.md) | 四大师综合深度分析 | 对一家上市公司进行全方位投资研究 |
+| [`/company-valuation`](skills/company-valuation.md) | 公司内在价值与估值复核 | 腾讯等重点公司及美股七姐妹：现金流、SOTP、反向估值与可复算验证 |
 | [`/investment-team`](skills/investment-team.md) | 多Agent并行投研团队 | 4个Agent并行研究，最快速、最全面 |
 | [`/management-deep-dive`](skills/management-deep-dive.md) | 管理层纵深研究 | "买股票就是买人"——当管理层是核心变量时深挖 |
 | [`/private-company-research`](skills/private-company-research.md) | 未上市公司深度研究 | 研究蚂蚁、SpaceX等信息稀缺的未上市公司 |
@@ -199,6 +212,7 @@ AI Berkshire 确保：**同样的输入 → 结构一致、深度一致的输出
 | [`/industry-funnel`](skills/industry-funnel.md) | 行业漏斗筛选 | 全市场 → 粗筛 ≤10 家 → 终选 3 家深度分析 |
 | [`/quality-screen`](skills/quality-screen.md) | 去劣筛选（7条硬指标） | 快速排除非一流公司，支持个股/行业/指数/主题批量筛 |
 | [`/bottleneck-hunter`](skills/bottleneck-hunter.md) | 供应链瓶颈猎手 | 从超级趋势出发，寻找产业链物理瓶颈和套利机会 |
+| [`/era-alpha`](skills/era-alpha.md) | 时代α捕手 | 识别时代级高增长主线中的核心α，验证增长可持续性，给出介入与退出纪律 |
 | [`/investment-checklist`](skills/investment-checklist.md) | 巴菲特买入前 Checklist | 六关快速筛选，10分钟决定是否值得深入 |
 
 ### 📈 持仓管理类
@@ -221,7 +235,7 @@ AI Berkshire 确保：**同样的输入 → 结构一致、深度一致的输出
 
 ### 🔗 搭配 Claude Code 内置的 /deep-research
 
-除以上 20 个 skill 外，Claude Code 自带一个 `/deep-research` 深度研究编排器（内置于客户端，不由本仓库分发，安装 Claude Code 即可使用）。它的流程是：把问题拆成 5 个检索角度并行搜索 → 抓取来源、提取可证伪论断 → 每条论断由 3 个独立 Agent 对抗验证（3 票中 2 票证伪才剔除）→ 按置信度合成带引用来源的报告。核心价值是每条结论都被人试图推翻过，而不是搜到什么写什么。
+除以上 22 个 skill 外，Claude Code 自带一个 `/deep-research` 深度研究编排器（内置于客户端，不由本仓库分发，安装 Claude Code 即可使用）。它的流程是：把问题拆成 5 个检索角度并行搜索 → 抓取来源、提取可证伪论断 → 每条论断由 3 个独立 Agent 对抗验证（3 票中 2 票证伪才剔除）→ 按置信度合成带引用来源的报告。核心价值是每条结论都被人试图推翻过，而不是搜到什么写什么。
 
 适合在运行本仓库的个股/行业 skill 之前，先对一个关键事实判断做独立核查。实战示例：[存储涨价周期研究](reports/存储行业/存储涨价周期研究-还能维持几年高价-20260727.md)（106 个检索/验证 Agent，23 条论断三票制交叉验证）、[diffusion LLM 技术路线综述](reports/大模型技术/diffusion-LLM技术路线综述-与AR对比-20260706.md)（25 条论断验证，22 条确认、3 条被证伪）。
 
@@ -648,12 +662,30 @@ REM 可选：安装 Codex slash prompts
 
 > 以下是使用本框架生成的真实投资研究报告，展示 AI 投研的实际输出效果。
 
+<!-- REPORTS-INDEX:START 由 tools/reports_index.py 自动更新，勿手改 -->
+
+**📊 [全部研究索引 →](reports/README.md)** ｜ 2274 份报告 · 111 家公司 · 29 个专题 · 更新至 2026-10-28
+
+最近更新：
+
+| 日期 | 报告 | 归属 |
+|------|------|------|
+| 2026-10-28 | [泡泡玛特（09992.HK）2026Q3业绩分析](reports/泡泡玛特/泡泡玛特-earnings-2026H1及Q3更新-20261028.md) | 泡泡玛特 |
+| 2026-10-27 | [腾讯控股（00700.HK）投资研究报告](reports/腾讯/腾讯投资研究报告-workbuddy-20261027.md) | 腾讯 |
+| 2026-10-25 | [腾讯与快手估值及三年、十年回报研究报告](reports/腾讯快手比较/估值-20261025/腾讯与快手估值及三年十年回报研究报告-20261025.md) | 腾讯快手比较 |
+| 2026-10-25 | [腾讯估值证据与经营分析底稿](reports/腾讯快手比较/估值-20261025/tencent_research.md) | 腾讯快手比较 |
+| 2026-10-24 | [恒生科技与纳斯达克估值对比研究报告](reports/恒生科技/恒生科技与纳斯达克估值对比-20261024.md) | 恒生科技 |
+| 2026-10-23 | [恒生科技估值全景：指数与十家公司的历史位置（2026-10-23）](reports/恒生科技/恒生科技估值全景-20261023.md) | 恒生科技 |
+
+<!-- REPORTS-INDEX:END -->
+
 | 公司 | 使用 Skill | 核心结论 | 报告链接 |
 |------|-----------|---------|---------|
 | 拼多多 (PDD) | `/investment-team` | 综合3.4/5，极度便宜但10年确定性不足，适合中等仓位 | [查看报告](reports/拼多多/) |
 | 腾讯控股 (0700.HK) | `/investment-research` | 社交垄断+资本配置卓越，14x前瞻PE合理偏低 | [查看报告](reports/腾讯/) |
 | 7家公司对比 | `/investment-checklist` | 茅台、腾讯通过；英伟达、美团、快手有条件通过；拼多多、泡泡玛特灰色 | [查看报告](reports/多公司对比-checklist-20260408.md) |
 | 大师持仓追踪 | 自定义研究 | 巴菲特/李录/段永平最新13F持仓+PDD成本分析 | [查看报告](reports/大师持仓追踪-research-20260408.md) |
+| 折扣零售产业链 | `/industry-research` | 逻辑链6环中2环已证伪（尾货供给枯竭、线上量价齐升）；最佳环节是奥莱物业与消费REITs而非线上特卖平台 | [查看报告](reports/折扣零售产业链/) |
 
 > *更多报告将持续添加。欢迎 PR 提交你用本框架生成的研究报告。*
 
@@ -675,6 +707,8 @@ REM 可选：安装 Codex slash prompts
 - 你得到的不是四份报告的拼接，而是四种思维方式的碰撞
 
 ### 金融严谨性工具 (`tools/financial_rigor.py`)
+
+专门估值可调用 `/company-valuation 腾讯`（Codex 使用 `$company-valuation 腾讯`）。[公司方法指南](tools/valuation/company-playbooks.md) 覆盖 14 家公司；[估值引擎](tools/valuation/model-schema.md) 使用 Decimal 计算 DCF、股权桥、敏感性与反向估值。[验证记录](tools/valuation/validation.md) 区分算术测试、行为复核和仍需当期验证的经济假设。
 
 | 功能 | 命令 | 解决的问题 |
 |------|------|-----------|

@@ -8,6 +8,8 @@ English | [中文](README.md) | [日本語](README_JA.md)
 >
 > Redefining the depth and efficiency of investment research with AI.
 
+> 📖 **Reading site:** [xbtlin.github.io/ai-berkshire](https://xbtlin.github.io/ai-berkshire/) — all finished reports (in Chinese), organized by company, topic and date; works well on desktop and mobile.
+
 **AI Berkshire** is a collection of investment research skills compatible with both Claude Code and Codex. It systematizes the methodologies of four value investing masters — Buffett, Munger, Duan Yongping, and Li Lu — and delivers professional-grade research through AI Agents.
 
 One person + Claude Code / Codex = an entire investment research team.
@@ -189,6 +191,7 @@ Ask AI directly, and you have one context window. Four parallel Agents means 4×
 | [`/industry-funnel`](skills/industry-funnel.md) | Industry funnel screening | Full market → rough cut ≤10 → final pick 3, with deep analysis |
 | [`/quality-screen`](skills/quality-screen.md) | Quality screen (7 hard metrics) | Quickly eliminate non-first-class companies; supports single stock / industry / index / thematic batch screening |
 | [`/bottleneck-hunter`](skills/bottleneck-hunter.md) | Supply-chain bottleneck hunter | Start from a supertrend and find physical supply-chain bottlenecks and arbitrage opportunities |
+| [`/era-alpha`](skills/era-alpha.md) | Era-alpha catcher | Identify the core alpha in era-level high-growth trends, verify growth durability, and set entry/exit discipline |
 | [`/investment-checklist`](skills/investment-checklist.md) | Buffett pre-buy checklist | Six gates, 10-minute decision on whether to dig deeper |
 
 ### 📈 Portfolio Management

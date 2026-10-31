@@ -10,6 +10,8 @@
 >
 > AIでリサーチの深度と効率を再定義する。
 
+> 📖 **閲覧サイト：** [xbtlin.github.io/ai-berkshire](https://xbtlin.github.io/ai-berkshire/) — 完成版レポート（中国語）を企業・テーマ・日付別に整理。PC・スマホで読みやすい形式です。
+
 **AI Berkshire** は、Claude CodeおよびCodexに対応した投資リサーチSkillのコレクションです。バフェット・マンガー・段永平（ダン・ヨンピン）・李録（リ・ルー）という4人のバリュー投資の巨人の方法論を体系化し、AIエージェントによりプロフェッショナル水準のリサーチを提供します。
 
 1人 + Claude Code / Codex = 投資リサーチチーム丸ごと。
@@ -191,6 +193,7 @@ AIに直接聞けばコンテキストウィンドウは1つです。4つの並�
 | [`/industry-funnel`](skills/industry-funnel.md) | 業界ファネルスクリーニング | 全市場 → 粗選り≤10社 → 最終選定3社、深掘り分析付き |
 | [`/quality-screen`](skills/quality-screen.md) | クオリティスクリーン（7つの厳格指標） | 一流でない企業を素早く排除；個別銘柄 / 業界 / 指数 / テーマのバッチスクリーニングに対応 |
 | [`/bottleneck-hunter`](skills/bottleneck-hunter.md) | サプライチェーンボトルネックハンター | 大きなトレンドから物理的なサプライチェーンのボトルネックと裁定機会を探す |
+| [`/era-alpha`](skills/era-alpha.md) | 時代アルファキャッチャー | 時代級の高成長トレンドの中核アルファを識別し、成長の持続性を検証し、エントリーと撤退の規律を提示 |
 | [`/investment-checklist`](skills/investment-checklist.md) | バフェット購入前チェックリスト | 6つのゲート、10分で深掘りする価値があるかを判断 |
 
 ### 📈 ポートフォリオ管理
